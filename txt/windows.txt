@@ -1,0 +1,103 @@
+12
+PDA Creator
+400 300
+600 500
+67 86 100
+main_screen.pam
+txt/StartButtons.txt
+none
+
+Quit
+250 150
+600 500
+67 86 100
+main_screen.pam
+txt/QuitButtons.txt
+none
+
+Create PDA
+300 200
+600 500
+67 86 100
+main_screen.pam
+txt/CreateButtons.txt
+none
+
+CFG Entry
+600 600
+400 400
+67 86 100
+main_screen.pam
+txt/CFGButtons.txt
+txt/CFGTextboxes.txt
+
+Load CFG
+300 200
+400 400
+67 86 100
+main_screen.pam
+txt/LoadButtons.txt
+txt/LoadTextbox.txt
+
+Pushdown Automaton Viewer
+700 700
+400 400
+67 86 100
+main_screen.pam
+txt/PDAButtons.txt
+none
+
+Save File
+300 200
+400 400
+67 86 100
+main_screen.pam
+txt/SaveButtons.txt
+txt/SaveTextbox.txt
+
+Help: Page 1 of 5
+500 500
+0 0
+67 86 100
+main_screen.pam
+txt/HelpButtons1.txt
+none
+
+Help: Page 2 of 5
+500 500
+0 0
+67 86 100
+main_screen.pam
+txt/HelpButtons2.txt
+none
+
+Help: Page 3 of 5
+500 500
+0 0
+67 86 100
+main_screen.pam
+txt/HelpButtons2.txt
+none
+
+Help: Page 4 of 5
+500 500
+0 0
+67 86 100
+main_screen.pam
+txt/HelpButtons2.txt
+none
+
+Help: Page 5 of 5
+500 500
+0 0
+67 86 100
+main_screen.pam
+txt/HelpButtons3.txt
+none
+
+//----------File Structure----------
+Window_Name
+Width		Height
+X_position	Y_position
+Button_file			// "none" if no buttons required
+Textbox_file		// "none" if no textboxes required

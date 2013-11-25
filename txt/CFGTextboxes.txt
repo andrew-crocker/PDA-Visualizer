@@ -1,0 +1,11 @@
+4
+37 250		150 45		States
+225 250		150 45		Terminals
+413 250		150 45		Start
+37 400		150 45		Productions
+
+// Window is 600x600 px
+
+//------File Structure--------
+num_textboxes
+Position(x,y)	Size(w,h)		Name

@@ -1,0 +1,8 @@
+1
+15 125		185 50		Filename
+
+// Window is 300x200 px
+
+//------File Structure--------
+num_textboxes
+Position(x,y)	Size(w,h)		Name
