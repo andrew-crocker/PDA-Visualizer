@@ -1,9 +1,16 @@
+<<<<<<< HEAD
 3
+=======
+4
+>>>>>>> 4d2e5dea7c956fe4ead6669b946f9b7915bd94f5
 75 240		200 45		Variables
 75 332		200 45		Terminals
 75 424		200 45		Start
 335 240		200 45		Productions
+<<<<<<< HEAD
 			120?
+=======
+>>>>>>> 4d2e5dea7c956fe4ead6669b946f9b7915bd94f5
 
 // Window is 600x600 px
 
