@@ -25,6 +25,10 @@ class Window {
 	int previous_id;
 	int num_buttons;
 	bool texture;
+	string err_mesg;
+	bool show_err_mesg;
+	Point2 err_mesg_location;
+	void * font;
 	unsigned background;
 	string texture_file;
 	bool exists;
@@ -70,7 +74,8 @@ public:
 	Point2 get_previous_textbox_position();
 	int get_previous_textbox_width();
 	int get_previous_textbox_height();
-	
+	void set_err_bool(bool);
+	void set_err_mesg(string, int, int, void *);	
 };
 
 #endif

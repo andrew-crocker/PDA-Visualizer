@@ -52,6 +52,8 @@ Textbox::Textbox(Point2 p, int w, int h, char new_text) {
 Textbox::Textbox(istream &is) {
 	textInBox = "";
 	is >> boundingBox.x >> boundingBox.y >> width >> height >> label;
+	if (label == "none")
+		label = "";
 	overTextBox = false;
 	clicked = false;
 	max_num_chars = (width-15)/9;

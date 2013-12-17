@@ -1,6 +1,17 @@
 #include "../headers/Window.h"
 using namespace std;
 
+
+
+// the drawText function draws some text at location x, y
+//   note:  the text to be drawn is a C-style string!
+void drawText(int x, int y, const char *text, void * font) {
+	glRasterPos2f( x, y );
+	int length = strlen(text);
+	for (int i = 0; i < length; i++)
+	    glutBitmapCharacter(font, text[i]);
+}
+
 const int Window::DEFAULT_WIDTH = 500;
 const int Window::DEFAULT_HEIGHT = 500;
 const int Window::DEFAULT_X_POS = 100;
@@ -23,6 +34,10 @@ Window::Window() {
 	exists = 0;
 	texture = 0;
 	background = 0;
+	err_mesg = "";
+	show_err_mesg = 0;
+	err_mesg_location.x = DEFAULT_X_POS;
+	err_mesg_location.y = DEFAULT_Y_POS;
 	buttons = new Button*[1];
 	buttons[0] = new Button;
 	t_boxes = new TextboxArray;
@@ -67,6 +82,10 @@ Window::Window(istream &g) {
 	else {
 		t_boxes = new TextboxArray;
 	}
+	err_mesg = "";
+	show_err_mesg = 0;
+	err_mesg_location.x = DEFAULT_X_POS;
+	err_mesg_location.y = DEFAULT_Y_POS;
 }
 
 // Window::~Window() {
@@ -224,14 +243,18 @@ void Window::undraw() {
 void Window::drawWindow() {
 	glClear(GL_COLOR_BUFFER_BIT);
 	if (texture) {
-		// cout << "why am I here?" << endl;
-		// cout << "draw texture ID: " << background << endl;
 		drawTexture(background, 0,0, width, height);//texNum, x,y, width, height, alpha, rotation (in radians)
 	}
 	for(int i = 0; i < num_buttons; ++i) {
 		buttons[i]->draw();
 	}
 	t_boxes->draw();
+
+	if (show_err_mesg) {
+		// cout << "inside this shit " << err_mesg << endl;
+		glColor3f(0, 0, 0);  // black
+		drawText(err_mesg_location.x, err_mesg_location.y, err_mesg.c_str(), font);
+	}
 	glutSwapBuffers();
 }
 
@@ -268,12 +291,6 @@ char Window::get_new_text_in_box(int t_box) {
 }
 
 void Window::add_new_textbox(Textbox & t) {
-	// cout << t_boxes->getNumTextboxes() << endl;
-	// Textbox ** t = new Textbox*[1];
-	// t[0] = new Textbox(p, width, height, start_text);
-	// TextboxArray temp(t, 1);
-	// t_boxes += temp;
-	// Textbox t(p, width, height, start_text);
 	t_boxes->addTextbox(t);
 }
 
@@ -298,4 +315,15 @@ int Window::get_previous_textbox_width() {
 int Window::get_previous_textbox_height() {
 	int last_textbox = t_boxes->getNumTextboxes()-1;
 	return t_boxes->getHeight(last_textbox);
+}
+
+void Window::set_err_mesg(string s, int x, int y, void * f) {
+	err_mesg = s;
+	err_mesg_location.x = x;
+	err_mesg_location.y = y;
+	font = f;
+}
+
+void Window::set_err_bool(bool b) {
+	show_err_mesg = b;
 }

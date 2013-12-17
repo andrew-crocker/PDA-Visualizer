@@ -15,9 +15,9 @@ BINARIES = Framework
 all: $(BINARIES)
 
 Framework: objects/Framework.o
-	g++ $(OPTS) -o Framework objects/Framework.o objects/texture.o objects/Button.o objects/Textbox.o objects/TextboxArray.o objects/Window.o $(LIBS)
+	g++ $(OPTS) -o Framework objects/Framework.o objects/texture.o objects/Button.o objects/Textbox.o objects/TextboxArray.o objects/Window.o objects/CFG.o $(LIBS)
 
-objects/Framework.o: Framework.cpp objects/Window.o
+objects/Framework.o: Framework.cpp objects/Window.o objects/CFG.o
 	g++ $(OPTS) $(MACOSX_DEFINE) -c Framework.cpp -o objects/Framework.o
 
 objects/Window.o: headers/Window.h definitions/Window.cpp objects/Button.o objects/TextboxArray.o
@@ -34,6 +34,9 @@ objects/Textbox.o: headers/Textbox.h definitions/Textbox.cpp headers/ColorPoint2
 
 objects/TextboxArray.o: headers/TextboxArray.h definitions/TextboxArray.cpp objects/Textbox.o
 	g++ $(OPTS) -c definitions/TextboxArray.cpp -o objects/TextboxArray.o
+
+objects/CFG.o: headers/CFG.h definitions/CFG.cpp
+	g++ $(OPTS) -c definitions/CFG.cpp -o objects/CFG.o
 	
 clean:
 	rm $(BINARIES) objects/*.o

@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "headers/Window.h"
+#include "headers/CFG.h"
 
 using namespace std;
 
@@ -13,6 +14,7 @@ int numWindows;
 Window ** WinArray;
 int num_new_textboxes = 0;
 Textbox * new_textboxes[6];
+CFG * cfg;
 
 void createNewWindow(Window &, Window);
 
@@ -125,7 +127,7 @@ void keyboard( unsigned char c, int x, int y ) {
 					if (num_new_textboxes > 0)
 						--num_new_textboxes;
 				}
-				else if (s != 0 && s != 32) { // s is a new character
+				else if (s != 0 && s != 32) { // s is a new character that isn't a space
 					if (num_new_textboxes == 0) {
 						Point2 p(335, 240);
 						int wid = 200;
@@ -363,12 +365,13 @@ void mouse3(int mouseButton, int state, int x, int y) {
 				string start_state = WinArray[3]->get_text_in_box(2);
 				vector<string> productions;
 				for (int i = 0; i < num_new_textboxes; ++i) {
-					productions.push_back(WinArray[3]->get_text_in_box(i));
+					productions.push_back(WinArray[3]->get_text_in_box(i+3));
 				}
-				cout << variables << endl << terminals << endl << start_state << endl;
-				for (int i = 0; i < num_new_textboxes; ++i) {
-					cout << productions[i] << endl;
-				}
+				//cfg = new CFG(variables, terminals, start_state.c_str(), productions);
+				// cout << variables << endl << terminals << endl << start_state << endl;
+				// for (int i = 0; i < num_new_textboxes; ++i) {
+				// 	cout << productions[i] << endl;
+				// }
 				WinArray[5]->set_previous_id(3);
 				WinArray[3]->undraw();
 				createNewWindow(*WinArray[5], *WinArray[3]);
@@ -511,7 +514,20 @@ void mouse6(int mouseButton, int state, int x, int y) {
 				createNewWindow(*WinArray[5], *WinArray[6]);
 			}
 			else if (button_id == "Save") {
-				cout << "Saving" << endl;
+				//int ret;
+				string savefile = WinArray[6]->get_text_in_box(0);
+				// cout << "Saving to " << savefile << endl;
+				// if ((ret = cfg.save(savefile)) < 0) {
+					string err_mesg;
+					err_mesg = "Error saving to ";
+					err_mesg += savefile;
+					err_mesg += ". Please try again.";
+					WinArray[6]->set_err_mesg(err_mesg, 25, 90, GLUT_BITMAP_HELVETICA_12);
+					WinArray[6]->set_err_bool(1);
+				// }
+					// else {
+					// 	WinArray[6]->set_err_bool(0);
+					// }
 			}
 			else {
 				// cout << glutGetWindow() << endl;
@@ -860,89 +876,57 @@ void createNewWindow(Window &new_win, Window old_win) {
 	if (win == WinArray[0]->get_current_id()) {
 		glutDisplayFunc(drawWindow0);
 		glutMouseFunc(mouse0);
-		glutMotionFunc(mouse_motion);
-		glutPassiveMotionFunc(mouse_motion);		
 	}
 	else if (win == WinArray[1]->get_current_id()) {
 		glutDisplayFunc(drawWindow1);
-		glutKeyboardFunc(keyboard);
 		glutMouseFunc(mouse1);
-		glutMotionFunc(mouse_motion);
-		glutPassiveMotionFunc(mouse_motion);		
 	}
 	else if (win == WinArray[2]->get_current_id()) {
 		glutDisplayFunc(drawWindow2);
-		glutKeyboardFunc(keyboard);
 		glutMouseFunc(mouse2);
-		glutMotionFunc(mouse_motion);
-		glutPassiveMotionFunc(mouse_motion);		
 	}
 	else if (win == WinArray[3]->get_current_id()) {
 		glutDisplayFunc(drawWindow3);
-		glutKeyboardFunc(keyboard);
 		glutMouseFunc(mouse3);
-		glutMotionFunc(mouse_motion);
-		glutPassiveMotionFunc(mouse_motion);		
 	}
 	else if (win == WinArray[4]->get_current_id()) {
 		glutDisplayFunc(drawWindow4);
-		glutKeyboardFunc(keyboard);
 		glutMouseFunc(mouse4);
-		glutMotionFunc(mouse_motion);
-		glutPassiveMotionFunc(mouse_motion);		
 	}
 	else if (win == WinArray[5]->get_current_id()) {
 		glutDisplayFunc(drawWindow5);
-		glutKeyboardFunc(keyboard);
 		glutMouseFunc(mouse5);
-		glutMotionFunc(mouse_motion);
-		glutPassiveMotionFunc(mouse_motion);		
 	}
 	else if (win == WinArray[6]->get_current_id()) {
 		glutDisplayFunc(drawWindow6);
-		glutKeyboardFunc(keyboard);
 		glutMouseFunc(mouse6);
-		glutMotionFunc(mouse_motion);
-		glutPassiveMotionFunc(mouse_motion);		
 	}
 	else if (win == WinArray[7]->get_current_id()) {
 		glutDisplayFunc(drawWindow7);
-		glutKeyboardFunc(keyboard);
 		glutMouseFunc(mouse7);
-		glutMotionFunc(mouse_motion);
-		glutPassiveMotionFunc(mouse_motion);		
 	}
 	else if (win == WinArray[8]->get_current_id()) {
 		glutDisplayFunc(drawWindow8);
-		glutKeyboardFunc(keyboard);
 		glutMouseFunc(mouse8);
-		glutMotionFunc(mouse_motion);
-		glutPassiveMotionFunc(mouse_motion);		
 	}
 	else if (win == WinArray[9]->get_current_id()) {
 		glutDisplayFunc(drawWindow9);
-		glutKeyboardFunc(keyboard);
 		glutMouseFunc(mouse9);
-		glutMotionFunc(mouse_motion);
-		glutPassiveMotionFunc(mouse_motion);		
 	}
 	else if (win == WinArray[10]->get_current_id()) {
 		glutDisplayFunc(drawWindow10);
-		glutKeyboardFunc(keyboard);
 		glutMouseFunc(mouse10);
-		glutMotionFunc(mouse_motion);
-		glutPassiveMotionFunc(mouse_motion);		
 	}
 	else if (win == WinArray[11]->get_current_id()) {
 		glutDisplayFunc(drawWindow11);
-		glutKeyboardFunc(keyboard);
 		glutMouseFunc(mouse11);
-		glutMotionFunc(mouse_motion);
-		glutPassiveMotionFunc(mouse_motion);		
 	}
 	else {
 		cout << "Fudgey poo... something's wrong!" << endl;
 	}
+	glutKeyboardFunc(keyboard);
+	glutMotionFunc(mouse_motion);
+	glutPassiveMotionFunc(mouse_motion);
 
 	glutPostWindowRedisplay(new_win.get_current_id());
 	glutSetWindow(new_win.get_current_id());
