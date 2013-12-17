@@ -56,12 +56,21 @@ public:
 	string get_texture_file();
 	bool has_texture();
 	void undraw();
-	void t_box_keypress(unsigned char, int, int);
+	int t_box_keypress(unsigned char, int, int);
 	void t_box_mousepress(int, int, int, int);
 	void buttons_mousepress(int, int, int, int);
 	void t_box_mousemotion(int, int);
 	void buttons_mousemotion_dragging(int, int);
 	void buttons_mousemotion_notdragging(int, int);
+	string get_text_in_box(int);
+	char get_new_text_in_box(int);
+	void add_new_textbox(Textbox &);
+	void remove_textbox();
+	int get_textbox_clicked(int);
+	Point2 get_previous_textbox_position();
+	int get_previous_textbox_width();
+	int get_previous_textbox_height();
+	
 };
 
 #endif

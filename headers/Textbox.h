@@ -19,11 +19,13 @@ class Textbox {
 	unsigned int max_num_chars;
 public:
 	Textbox();
+	Textbox(const Textbox &);
 	Textbox(Point2, int, int);
+	Textbox(Point2, int, int, char);
 	Textbox(istream &);
 
 	void drawBox(int, int, int, int);
-	void drawText(int, int, const char *);
+	void drawText(int, int, const char *, void *);
 	void draw();
 	bool containsPoint(int, int) const;
 
@@ -38,6 +40,10 @@ public:
 	unsigned int getTextInBoxLength();
 	unsigned int getMaxNumChars();
 	void setMaxNumChars(unsigned int);
+	Textbox & operator=(const Textbox);
+	Point2 getPosition();
+	int getWidth();
+	int getHeight();
 };
 
 #endif

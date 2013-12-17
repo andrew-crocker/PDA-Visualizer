@@ -1,8 +1,9 @@
-4
-37 250		150 45		States
-225 250		150 45		Terminals
-413 250		150 45		Start
-37 400		150 45		Productions
+3
+75 240		200 45		Variables
+75 332		200 45		Terminals
+75 424		200 45		Start
+335 240		200 45		Productions
+			120?
 
 // Window is 600x600 px
 

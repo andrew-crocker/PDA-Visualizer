@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 
 #include "headers/Window.h"
 
@@ -10,6 +11,8 @@ bool mouseIsDragging = false;
 
 int numWindows;
 Window ** WinArray;
+int num_new_textboxes = 0;
+Textbox * new_textboxes[6];
 
 void createNewWindow(Window &, Window);
 
@@ -111,29 +114,65 @@ void keyboard( unsigned char c, int x, int y ) {
 			break;
 		}
 	}
-	WinArray[current]->t_box_keypress(c, x, y);
-	switch(c) {
-	case 'q':
-	case 'Q':
-	case 27:
-	
-		// // WinArray[current]->undraw();
-		// if (!WinArray[1]->get_exists()) {
-		// 	// glutPostRedisplay();
-		// 	createNewWindow(*WinArray[1], *WinArray[0]);
-		// 	WinArray[1]->set_exists(1);
-		// }
-		// // They've already created a Quit window and they're trying to create another. :(
-		// else if (WinArray[1]->get_exists()) {
-		// 	WinArray[1]->undraw();
-		// 	createNewWindow(*WinArray[1], *WinArray[0]);
-		// }
+	int textbox_control = WinArray[current]->t_box_keypress(c, x, y);
+	if (textbox_control) {
+		if (current == 3) { // CFG Entry window
+			if (WinArray[3]->get_textbox_clicked(0)) {
+				char s = WinArray[3]->get_new_text_in_box(0);
+				// cout << "s: " << (int)s << endl;
+				if (textbox_control == -1) {
+					WinArray[3]->remove_textbox();
+					if (num_new_textboxes > 0)
+						--num_new_textboxes;
+				}
+				else if (s != 0 && s != 32) { // s is a new character
+					if (num_new_textboxes == 0) {
+						Point2 p(335, 240);
+						int wid = 200;
+						int hei = 45;
+						new_textboxes[num_new_textboxes] = new Textbox(p, wid, hei, s);
+						WinArray[3]->add_new_textbox(*new_textboxes[num_new_textboxes]);
+						++num_new_textboxes;
+						// cout << s << endl;
+					}
+					else if (num_new_textboxes < 6) {
+						Point2 p = WinArray[3]->get_previous_textbox_position();
+						int wid = WinArray[3]->get_previous_textbox_width();
+						int hei = WinArray[3]->get_previous_textbox_height();
+						p.y += 46;
+						new_textboxes[num_new_textboxes] = new Textbox(p, wid, hei, s);
+						WinArray[3]->add_new_textbox(*new_textboxes[num_new_textboxes]);
+						++num_new_textboxes;
+						// cout << s << endl;
+					}
+				}
+			}
+		}
+	}
+	else {
+		switch(c) {
+		case 'q':
+		case 'Q':
+		case 27:
+		
+			// WinArray[current]->undraw();
+			if (!WinArray[1]->get_exists()) {
+				// glutPostRedisplay();
+				createNewWindow(*WinArray[1], *WinArray[0]);
+				WinArray[1]->set_exists(1);
+			}
+			// They've already created a Quit window and they're trying to create another. :(
+			else if (WinArray[1]->get_exists()) {
+				WinArray[1]->undraw();
+				createNewWindow(*WinArray[1], *WinArray[0]);
+			}
 
 
-		exitAll();
-		break;
-	default:
-		break;
+			exitAll();
+			break;
+		default:
+			break;
+		}
 	}
 	glutPostRedisplay();
 }
@@ -319,6 +358,17 @@ void mouse3(int mouseButton, int state, int x, int y) {
 				createNewWindow(*WinArray[9], *WinArray[3]);
 			}
 			else if (button_id == "Go!") {
+				string variables = WinArray[3]->get_text_in_box(0);
+				string terminals = WinArray[3]->get_text_in_box(1);
+				string start_state = WinArray[3]->get_text_in_box(2);
+				vector<string> productions;
+				for (int i = 0; i < num_new_textboxes; ++i) {
+					productions.push_back(WinArray[3]->get_text_in_box(i));
+				}
+				cout << variables << endl << terminals << endl << start_state << endl;
+				for (int i = 0; i < num_new_textboxes; ++i) {
+					cout << productions[i] << endl;
+				}
 				WinArray[5]->set_previous_id(3);
 				WinArray[3]->undraw();
 				createNewWindow(*WinArray[5], *WinArray[3]);

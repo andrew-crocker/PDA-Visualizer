@@ -18,8 +18,29 @@ Textbox::Textbox() {
 	max_num_chars = (width-15)/9;
 }
 
+Textbox::Textbox(const Textbox &t) {
+	textInBox = t.textInBox;
+	boundingBox = t.boundingBox;
+	width = t.width;
+	height = t.height;
+	overTextBox = t.overTextBox;
+	clicked = t.clicked;
+	max_num_chars = t.max_num_chars;
+}
+
 Textbox::Textbox(Point2 p, int w, int h) {
 	textInBox = "";
+	boundingBox = p;
+	width = w;
+	height = h;
+	overTextBox = false;
+	clicked = false;
+	max_num_chars = (width-15)/9;
+}
+
+Textbox::Textbox(Point2 p, int w, int h, char new_text) {
+	textInBox = new_text;
+	textInBox += " ";
 	boundingBox = p;
 	width = w;
 	height = h;
@@ -49,11 +70,11 @@ void Textbox::drawBox(int x, int y, int w, int h) {
 
 // the drawText function draws some text at location x, y
 //   note:  the text to be drawn is a C-style string!
-void Textbox::drawText(int x, int y, const char *text) {
+void Textbox::drawText(int x, int y, const char *text, void * font) {
 	glRasterPos2f( x, y );
 	int length = strlen(text);
 	for (int i = 0; i < length; i++)
-	    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, text[i]);
+	    glutBitmapCharacter(font, text[i]);
 }
 
 void Textbox::draw() {
@@ -66,14 +87,14 @@ void Textbox::draw() {
 		glColor3f(.75, .75, .75);  // light gray
 	drawBox(boundingBox.x+5, boundingBox.y+5, width-10, height-10);
 	glColor3f(0, 0, 0);  // black
-	drawText(boundingBox.x+(width/2)-(4.5*label.length()), boundingBox.y-9, label.c_str());
+	drawText(boundingBox.x+(width/2)-(4.5*label.length()), boundingBox.y-9, label.c_str(), GLUT_BITMAP_HELVETICA_18);
 	if (clicked) { // draw with a cursor
 		string withCursor(textInBox);
 	    withCursor += '|';
-	    drawText(boundingBox.x+8, boundingBox.y+height/2+4, withCursor.c_str());
+	    drawText(boundingBox.x+8, boundingBox.y+height/2+4, withCursor.c_str(), GLUT_BITMAP_9_BY_15);
 	}
 	else
-		drawText(boundingBox.x+8, boundingBox.y+height/2+4, textInBox.c_str());
+		drawText(boundingBox.x+8, boundingBox.y+height/2+4, textInBox.c_str(), GLUT_BITMAP_9_BY_15);
 }
 
 bool Textbox::containsPoint( int x, int y ) const {
@@ -126,4 +147,28 @@ unsigned int Textbox::getMaxNumChars() {
 
 void Textbox::setMaxNumChars(unsigned int m) {
 	max_num_chars = m;
+}
+
+Textbox & Textbox::operator=(const Textbox t) {
+	textInBox = t.textInBox;
+	label = t.label;
+	boundingBox = t.boundingBox;
+	width = t.width;
+	height = t.height;
+	overTextBox = t.overTextBox;
+	clicked = t.clicked;
+	max_num_chars = t.max_num_chars;
+	return *this;
+}
+
+Point2 Textbox::getPosition() {
+	return boundingBox;
+}
+
+int Textbox::getWidth() {
+	return width;
+}
+
+int Textbox::getHeight() {
+	return height;
 }

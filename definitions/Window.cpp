@@ -202,8 +202,8 @@ void Window::buttons_mousepress(int mouseButton, int state, int x, int y) {
 	}
 }
 
-void Window::t_box_keypress(unsigned char c, int x, int y) {
-	t_boxes->handleKeyPress(c, x, y);
+int Window::t_box_keypress(unsigned char c, int x, int y) {
+	return t_boxes->handleKeyPress(c, x, y);
 }
 
 void Window::t_box_mousepress(int mouseButton, int state, int x, int y) {
@@ -248,4 +248,54 @@ void Window::loadButtons(const char * filename ) {
 	// buttons[i]->display();
   } 
   // cout << "Number of buttons: " << num_buttons << endl;
+}
+
+string Window::get_text_in_box(int t_box) {
+	if (t_box < t_boxes->getNumTextboxes()) {
+		return t_boxes->getText(t_box);
+	}
+	else
+		return 0;
+}
+
+char Window::get_new_text_in_box(int t_box) {
+	if (t_box < t_boxes->getNumTextboxes()) {
+		string t = t_boxes->getText(t_box);
+		return t.back();
+	}
+	else
+		return 0;
+}
+
+void Window::add_new_textbox(Textbox & t) {
+	// cout << t_boxes->getNumTextboxes() << endl;
+	// Textbox ** t = new Textbox*[1];
+	// t[0] = new Textbox(p, width, height, start_text);
+	// TextboxArray temp(t, 1);
+	// t_boxes += temp;
+	// Textbox t(p, width, height, start_text);
+	t_boxes->addTextbox(t);
+}
+
+void Window::remove_textbox() {
+	t_boxes->removeTextbox();
+}
+
+int Window::get_textbox_clicked(int i) {
+	return t_boxes->getClicked(i);
+}
+
+Point2 Window::get_previous_textbox_position() {
+	int last_textbox = t_boxes->getNumTextboxes()-1;
+	return t_boxes->getPosition(last_textbox);
+}
+
+int Window::get_previous_textbox_width() {
+	int last_textbox = t_boxes->getNumTextboxes()-1;
+	return t_boxes->getWidth(last_textbox);
+}
+
+int Window::get_previous_textbox_height() {
+	int last_textbox = t_boxes->getNumTextboxes()-1;
+	return t_boxes->getHeight(last_textbox);
 }

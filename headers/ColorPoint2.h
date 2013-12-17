@@ -41,6 +41,11 @@ struct Point2 {
 		x = xPos;
 		y = yPos;
 	}
+	Point2 &operator=(const Point2 &p) {
+		x = p.x;
+		y = p.y;
+		return *this;
+	}
 	void display() {
 		cout << "Position: " << x << " " << y << endl;
 	}
