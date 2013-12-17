@@ -42,8 +42,8 @@ CFG::CFG(const char *filename) {
 
   	f.close();
 
-  	if (this.good()) 
-  		this.makeStructure();
+  	if (this->good()) 
+  		this->makeStructure();
 }
 
 CFG::CFG(string v, string t, const char ss, vector <string> p) {
@@ -68,8 +68,8 @@ CFG::CFG(string v, string t, const char ss, vector <string> p) {
 			productions[i].push_back(s);
 	}
 
-	if (this.good()) 
-		this.makeStructure();
+	if (this->good()) 
+		this->makeStructure();
 }
 
 int CFG::save(string filename) {
@@ -181,37 +181,42 @@ void CFG::makeStructure() {
 	three.resize(3);
 	four.resize(4);
 
+	RPP * rpp;
+	RPP * rpp2;
+	RPP * rpp3;
+	RPP * rpp4;
+
 	// fill vectors for productions
 	for (int i=0; i < productions.size(); i++) {
 		for (int j=0; j < productions[i].size(); j++) {
 			switch(productions[i][j].size()) {
 				case(1):
-					RPP rpp('E', variables[i], productions[i][j][0]);
-					one.push_back(rpp);
+					rpp = new RPP('E', variables[i], productions[i][j][0]);
+					one.push_back(*rpp);
 					break;
 				case(2):
-					RPP rpp('E', variables[i], productions[i][j][0]);
-					two[0].push_back(rpp);
-					RPP rpp2('E', 'E', productions[i][j][1]);
-					two[1].push_back(rpp2);
+					rpp = new RPP('E', variables[i], productions[i][j][0]);
+					two[0].push_back(*rpp);
+					rpp2 = new RPP('E', 'E', productions[i][j][1]);
+					two[1].push_back(*rpp2);
 					break;
 				case(3):
-					RPP rpp('E', variables[i], productions[i][j][0]);
-					three[0].push_back(rpp);
-					RPP rpp2('E', 'E', productions[i][j][1]);
-					three[1].push_back(rpp2);
-					RPP rpp3('E', 'E', productions[i][j][2]);
-					three[2].push_back(rpp3);
+					rpp = new RPP('E', variables[i], productions[i][j][0]);
+					three[0].push_back(*rpp);
+					rpp2 = new RPP('E', 'E', productions[i][j][1]);
+					three[1].push_back(*rpp2);
+					rpp3 = new RPP('E', 'E', productions[i][j][2]);
+					three[2].push_back(*rpp3);
 					break;
 				case(4):
-					RPP rpp('E', variables[i], productions[i][j][0]);
-					four[0].push_back(rpp);
-					RPP rpp2('E', 'E', productions[i][j][1]);
-					four[1].push_back(rpp2);
-					RPP rpp3('E', 'E', productions[i][j][2]);
-					four[2].push_back(rpp3);
-					RPP rpp4('E', 'E', productions[i][j][3]);
-					four[3].push_back(rpp4);
+					rpp = new RPP('E', variables[i], productions[i][j][0]);
+					four[0].push_back(*rpp);
+					rpp2 = new RPP('E', 'E', productions[i][j][1]);
+					four[1].push_back(*rpp2);
+					rpp3 = new RPP('E', 'E', productions[i][j][2]);
+					four[2].push_back(*rpp3);
+					rpp4 = new RPP('E', 'E', productions[i][j][3]);
+					four[3].push_back(*rpp4);
 					break;
 			}
 		}
