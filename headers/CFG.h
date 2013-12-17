@@ -10,14 +10,34 @@ using namespace std;
 #ifndef _CFG_
 #define _CFG_
 
+struct RPP {
+	char read;
+	char pop;
+	char push;
+	RPP(char r, char p1, char p2) {
+		read = r;
+		pop = p1;
+		push = p2;
+	}
+};
+
 class CFG {
 	vector<char> variables;
 	vector<char> terminals;
 	char start_state;
 	vector< vector<string> > productions;
 public:
+	// making these vectors public for convenience
+	vector<RPP> one;
+	vector< vector<RPP> > two;   // size two
+	vector< vector<RPP> > three; // size three
+	vector< vector<RPP> > four;  // size four
 	CFG(const char *filename);
-	CFG(string v, string t, char ss, vector <string> p);
+	CFG(string v, string t, const char ss, vector <string> p);
+	int save(string filename);
+	int good();
+	int validChar(char c);
+	void makeStructure();
 };
 
 #endif
