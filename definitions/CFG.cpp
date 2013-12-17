@@ -127,14 +127,15 @@ int CFG::isGood() {
 	// check if any of the productions are empty
 	for (int i=0; i < productions.size(); i++) {
 		if (productions[i].empty()) {
-			cerr << "Error: There are no productions for " << variables[i] << "." << endl;
+			error += "Error: There are no productions for ";
+			error += variables[i];
 			return 0;
 		}
 	}
 	// no capital E's in variables
 	for (int i=0; i < variables.size(); i++) {
 		if (variables[i] == 'E') {
-			cerr << "Error: 'E' cannot be used as a variable." << endl;
+			error += "Error: 'E' cannot be used as a variable";
 			return 0;
 		}
 	}
@@ -147,7 +148,7 @@ int CFG::isGood() {
 		}
 	}
 	if (!in) {
-		cerr << "Error!: The start state was not entered as a variable." << endl;
+		error += "Error!: The start state was not entered as a variable";
 		return 0;
 	}
 	// check if any of the characters in productions aren't a variable, terminal, or E
@@ -156,7 +157,9 @@ int CFG::isGood() {
 			for (int k=0; k < productions[i][j].size(); k++) {
 				char c = productions[i][j][k];
 				if (!validChar(c)) {
-					cerr << "Error: " << c << " is not a valid character." << endl;
+					error += "Error: ";
+					error += c;
+					error += " is not a valid character";
 					return 0;
 				}
 			}

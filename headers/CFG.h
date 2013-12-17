@@ -28,6 +28,7 @@ class CFG {
 	vector< vector<string> > productions;
 public:
 	int good;
+	string error;
 	// making these vectors public for convenience
 	vector<RPP> one;
 	vector< vector<RPP> > two;   // size two
