@@ -98,6 +98,6 @@ none
 //----------File Structure----------
 Window_Name
 Width		Height
-X_position	Y_position
+X_position	Y_position // screen position
 Button_file			// "none" if no buttons required
 Textbox_file		// "none" if no textboxes required
