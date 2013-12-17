@@ -59,7 +59,7 @@ Help: Page 1 of 5
 500 500
 0 0
 67 86 100
-images/main_screen.pam
+images/help1.pam
 txt/HelpButtons1.txt
 none
 
@@ -67,7 +67,7 @@ Help: Page 2 of 5
 500 500
 0 0
 67 86 100
-images/main_screen.pam
+images/help2.pam
 txt/HelpButtons2.txt
 none
 
@@ -75,7 +75,7 @@ Help: Page 3 of 5
 500 500
 0 0
 67 86 100
-images/main_screen.pam
+images/help3.pam
 txt/HelpButtons2.txt
 none
 
@@ -83,7 +83,7 @@ Help: Page 4 of 5
 500 500
 0 0
 67 86 100
-images/main_screen.pam
+images/help4.pam
 txt/HelpButtons2.txt
 none
 
@@ -91,7 +91,7 @@ Help: Page 5 of 5
 500 500
 0 0
 67 86 100
-images/main_screen.pam
+images/help5.pam
 txt/HelpButtons3.txt
 none
 
