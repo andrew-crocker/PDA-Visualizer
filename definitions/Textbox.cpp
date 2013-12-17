@@ -53,7 +53,7 @@ void Textbox::drawText(int x, int y, const char *text) {
 	glRasterPos2f( x, y );
 	int length = strlen(text);
 	for (int i = 0; i < length; i++)
-	    glutBitmapCharacter(GLUT_BITMAP_9_BY_15, text[i]);
+	    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, text[i]);
 }
 
 void Textbox::draw() {

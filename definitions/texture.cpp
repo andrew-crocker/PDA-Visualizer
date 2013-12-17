@@ -308,32 +308,33 @@ Texture::Texture(const char *filename)
 
 int loadTexture(const char *filename)
 {
-  map<const char *, int, ltstr>::iterator iter = textureFileLookup.find(filename);
+  //map<const char *, int, ltstr>::iterator iter = textureFileLookup.find(filename);
   if (1) {
   // if ( iter == textureFileLookup.end() ) {
     int currNum = globalTexture.size();
     globalTexture.push_back( Texture(filename) );  // create the texture
     textureFileLookup[filename] = currNum;
-  cout << "success" << endl;
+  // cout << "success" << endl;
     // cout << endl;
     return currNum;
-  } else {
-    int windowID = glutGetWindow();
-    Texture &curr = globalTexture[iter->second];
-    map<int, unsigned>::iterator iter2 = curr.win2id.find(windowID);
-    // if ( iter2 == curr.win2id.end() ) {
-    if (1) {
-      cout << "success-exists" << endl;
-      int id = curr.moveImgDataToGraphicsCard();  // redo for current window
-      curr.win2id[windowID] = id;
-    // cout << endl;
-      // cout << "new_windowID: " << windowID << endl;
-    }
-    else {
-      // cout << "existing_windowID: " << windowID << endl;
-    // cout << endl;
-      cout << "failed" << endl;
-    }
-    return iter->second;
-  }
+  } 
+  // else {
+  //   int windowID = glutGetWindow();
+  //   Texture &curr = globalTexture[iter->second];
+  //   //map<int, unsigned>::iterator iter2 = curr.win2id.find(windowID);
+  //   // if ( iter2 == curr.win2id.end() ) {
+  //   if (1) {
+  //     // cout << "success-exists" << endl;
+  //     int id = curr.moveImgDataToGraphicsCard();  // redo for current window
+  //     curr.win2id[windowID] = id;
+  //   // cout << endl;
+  //     // cout << "new_windowID: " << windowID << endl;
+  //   }
+  //   else {
+  //     // cout << "existing_windowID: " << windowID << endl;
+  //   // cout << endl;
+  //     // cout << "failed" << endl;
+  //   }
+  //   return iter->second;
+  // }
 }
