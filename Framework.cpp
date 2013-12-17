@@ -748,29 +748,32 @@ void reposition_window(Window &new_win, Window old_win) {
 	new_win.set_y_pos(screen_pos_y);
 }
 
+
 void mouse_motion(int x, int y) {
-	int current = 0;
+	int current;
 	int win = glutGetWindow();
 	for (current = 0; current < numWindows; ++current) {
 		if (win == WinArray[current]->get_current_id()) {
 			break;
 		}
 	}
+	if (current != 12) {
 
-	int screen_pos_x = glutGet((GLenum)GLUT_WINDOW_X);
-	int screen_pos_y = glutGet((GLenum)GLUT_WINDOW_Y);
-	WinArray[current]->set_x_pos(screen_pos_x);
-	WinArray[current]->set_y_pos(screen_pos_y);
+		int screen_pos_x = glutGet((GLenum)GLUT_WINDOW_X);
+		int screen_pos_y = glutGet((GLenum)GLUT_WINDOW_Y);
+		WinArray[current]->set_x_pos(screen_pos_x);
+		WinArray[current]->set_y_pos(screen_pos_y);
 
-	mouseCoords(x, y);
-	WinArray[current]->t_box_mousemotion(x, y);
-	if (mouseIsDragging) {
-		WinArray[current]->buttons_mousemotion_dragging(x, y);
+		mouseCoords(x, y);
+		WinArray[current]->t_box_mousemotion(x, y);
+		if (mouseIsDragging) {
+			WinArray[current]->buttons_mousemotion_dragging(x, y);
+		}
+		else {
+			WinArray[current]->buttons_mousemotion_notdragging(x, y);
+		}
+		glutPostRedisplay();
 	}
-	else {
-		WinArray[current]->buttons_mousemotion_notdragging(x, y);
-	}
-	glutPostRedisplay();
 }
 
 // create a window and return the id (I really don't know what this does)

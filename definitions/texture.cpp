@@ -309,7 +309,8 @@ Texture::Texture(const char *filename)
 int loadTexture(const char *filename)
 {
   map<const char *, int, ltstr>::iterator iter = textureFileLookup.find(filename);
-  if ( iter == textureFileLookup.end() ) {
+  if (1) {
+  // if ( iter == textureFileLookup.end() ) {
     int currNum = globalTexture.size();
     globalTexture.push_back( Texture(filename) );  // create the texture
     textureFileLookup[filename] = currNum;
