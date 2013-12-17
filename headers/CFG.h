@@ -27,6 +27,7 @@ class CFG {
 	char start_state;
 	vector< vector<string> > productions;
 public:
+	int good;
 	// making these vectors public for convenience
 	vector<RPP> one;
 	vector< vector<RPP> > two;   // size two
@@ -35,7 +36,7 @@ public:
 	CFG(const char *filename);
 	CFG(string v, string t, const char ss, vector <string> p);
 	int save(string filename);
-	int good();
+	int isGood();
 	int validChar(char c);
 	void makeStructure();
 };

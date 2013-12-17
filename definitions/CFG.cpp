@@ -42,8 +42,11 @@ CFG::CFG(const char *filename) {
 
   	f.close();
 
-  	if (this->good()) 
+  	if (this->isGood())  {
+  		good = 1;
   		this->makeStructure();
+  	}
+  	good = 0;
 }
 
 CFG::CFG(string v, string t, const char ss, vector <string> p) {
@@ -68,8 +71,11 @@ CFG::CFG(string v, string t, const char ss, vector <string> p) {
 			productions[i].push_back(s);
 	}
 
-	if (this->good()) 
+	if (this->isGood()) {
+		good = 1;
 		this->makeStructure();
+	}
+	good = 0;
 }
 
 int CFG::save(string filename) {
@@ -116,7 +122,7 @@ int CFG::save(string filename) {
 	return 1;
 }
 
-int CFG::good() {
+int CFG::isGood() {
 	// check if any of the productions are empty
 	for (int i=0; i < productions.size(); i++) {
 		if (productions[i].empty()) {
@@ -185,7 +191,6 @@ void CFG::makeStructure() {
 	RPP * rpp2;
 	RPP * rpp3;
 	RPP * rpp4;
-
 	// fill vectors for productions
 	for (int i=0; i < productions.size(); i++) {
 		for (int j=0; j < productions[i].size(); j++) {
