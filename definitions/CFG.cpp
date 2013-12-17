@@ -26,11 +26,12 @@ CFG::CFG(const char *filename) {
 
   	// get start state
   	f >> start_state;
+  	f.get();
 
   	// get productions
   	productions.resize(variables.size());
   	
-  	for (int i=0; !f.eof(); i++) {
+  	for (int i=0; productions.size(); i++) {
   		string s;
   		char buff;
   		getline(f, s);
