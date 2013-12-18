@@ -7,6 +7,8 @@
 #include "headers/CFG.h"
 #include "headers/Circle.h"
 
+#define PI 3.14159265358979323846
+
 using namespace std;
 
 bool mouseIsDragging = false;
@@ -16,6 +18,11 @@ Window ** WinArray;
 int num_new_textboxes = 0;
 Textbox * new_textboxes[6];
 CFG * cfg;
+Circle ** circs;
+Circle ** circs2;
+int num_circles;
+bool circle_clicked = 0;
+int clicked_circle = -1;
 
 void createNewWindow(Window &, Window);
 
@@ -23,6 +30,7 @@ void createNewWindow(Window &, Window);
 double distance (int x2, int y2, Point2 p) {
 	double dx = p.x - x2;
 	double dy = p.y - y2;
+	// cout << sqrt(dx * dx + dy * dy) << endl;
 	return sqrt(dx * dx + dy * dy);
 }
 
@@ -97,7 +105,7 @@ void drawWindow4() {
 	WinArray[4]->drawWindow(1);
 }
 
-void drawProductions(vector <RPP> rpp, int x, int y) {
+void drawProductions(vector <RPP> rpp, Point2 p) {
 	string buff;
 	for (int i=0; i < rpp.size(); i++) {
 		buff = rpp[i].read;
@@ -105,8 +113,125 @@ void drawProductions(vector <RPP> rpp, int x, int y) {
 		buff += rpp[i].pop;
 		buff += " -> ";
 		buff += rpp[i].push;
-		drawsText(x, y-(19*i), buff.c_str(), GLUT_BITMAP_HELVETICA_18);
+		drawsText(p.x, p.y+(19*i), buff.c_str(), GLUT_BITMAP_HELVETICA_18);
 	}
+}
+
+void drawTriangle(double x, double y, Point2 p) {
+	double x2, y2, x3, y3;
+	if (x == p.x) {
+		x2 = x-9;
+		x3 = x+9;
+		if (p.y > y)
+			y2 = y3 = y-18;
+		else
+			y2 = y3 = y+18;
+
+	}
+	else if (y == p.y) {
+		y2 = y-9;
+		y3 = y+9;
+		if (p.x > x)
+			x2 = x3 = x-18;
+		else
+			x2 = x3 = x+18;
+	}
+	else {
+		double dx, dy;
+		dx = (double)p.x - x;
+		dy = (double)p.y - y;
+		double slope = dy / dx;
+		double temp = x;
+		double wumbo;
+		// cout << slope << " " << y << " " << endl;
+		if (p.x < x) {
+			wumbo = y+slope*((temp+=.01)-x);
+			while ((distance(temp, wumbo, Point2(x, y))) < 18.0) {
+				// cout << "mumbo: " << wumbo << endl;
+				wumbo = y+slope*((temp+=.01)-x);
+			}
+		}
+		else {
+			wumbo = y+slope*((temp-=.01)-x);
+			while ((distance(temp, wumbo, Point2(x, y))) < 18.0) {
+				wumbo = y+slope*((temp-=.01)-x);
+			}
+		}
+		// wumbo == y, temp == x;
+		slope *= -1;
+		slope = 1 / slope;
+
+		double temp2 = temp;
+		double dumbo = wumbo+slope*((temp2+=.01)-temp);
+		while ((distance(temp2, dumbo, Point2(temp, wumbo))) < 9) {
+			dumbo = wumbo+slope*((temp2+=.01)-temp);
+		}
+		x2 = temp2;
+		y2 = dumbo;
+
+		temp2 = temp;
+		dumbo = wumbo+slope*((temp2-=.01)-temp);
+		while ((distance(temp2, dumbo, Point2(temp, wumbo))) < 9) {
+			dumbo = wumbo+slope*((temp2-=.01)-temp);
+		}
+		x3 = temp2;
+		y3 = dumbo;
+
+	}
+	glBegin(GL_TRIANGLES);
+	glVertex2f(x, y);
+	glVertex2f(x2, y2);
+	glVertex2f(x3, y3);
+	glEnd();
+}
+
+Point2 drawArc(Point2 p1, Point2 p2, Circle c, int magnitude) {
+    // glClear (GL_COLOR_BUFFER_BIT);
+    // glColor3f (1.0, 1.0, 0.0);
+    bool in_itself = 0;
+    if (c.containsPoint(p1.x, p1.y)) {
+    	in_itself = 1;
+    }
+    double tempx, tempy, t1, t2;
+    double dx, dy;
+	dy = p2.y - p1.y;
+	dx = p2.x - p1.x;
+    glBegin(GL_LINE_STRIP);
+    for (int i = 0; i < 1000; ++i) {
+    	double temp = (double)i/1000;
+    	double y = p1.y + ((double)i/1000)*dy;
+    	double x = p1.x + ((double)i/1000)*dx;
+    	if (i == 500) {
+    		tempx = x;
+    		tempy = y+magnitude*sin((temp)*PI);
+    	}
+    	t1 = x;
+    	t2 = y+magnitude*sin((temp)*PI);
+    	if (c.containsPoint(t1, t2) && !in_itself) {
+    		glEnd();
+    		glFlush();     //forces previously issued commands to execute
+    		drawTriangle(t1, t2, p2);
+    		break;
+    	}
+    	else if (in_itself) {
+    		if (!c.containsPoint(t1, t2)) {
+    			in_itself = 0;
+    		}
+    	}
+    	else {
+    		// poop
+    	}
+
+    	// cout << x << endl;
+    	//cout << sin((i/50)*PI) << endl;
+    	glVertex2f(x, t2);
+    	glVertex2f(x, t2+2);
+    }
+        // glVertex2f(100.0,100.0);      //f means floating point or those with decimals
+        // glVertex2f(400.0,100.0);
+        // glVertex2f(400.0, 500.0);
+
+    return Point2(tempx-30, tempy);
 }
 
 void drawWindow5() {
@@ -115,38 +240,130 @@ void drawWindow5() {
 		drawsText(130, 350, cfg->error.c_str(), GLUT_BITMAP_TIMES_ROMAN_24);
 	}
 	else {
-		Circle c;
-		c.draw();
-	}
-	else {
 		// draw text for q_s loop
-		drawsText(50, 325, "E,E -> delta", GLUT_BITMAP_HELVETICA_18);
 		// draw start state transition
 		string s = "E,E -> ";
 		s += cfg->start_state;
-		drawsText(75, 350, s.c_str(), GLUT_BITMAP_HELVETICA_18);
 		// draw productions with only one transition
-		drawProductions(cfg->one, 350, 325);
 		// // now draw productions with two transitions
-		if (!cfg->two[0].empty()) {
-			drawProductions(cfg->two[0], 420, 325);
-			drawProductions(cfg->two[1], 490, 325);
+
+		Point2 temp = circs[1]->getPosition();
+		temp = drawArc(Point2(temp.x-35, temp.y), Point2(temp.x+35, temp.y), *circs[1], 80);
+		drawProductions(cfg->one, temp);
+
+		
+		temp = drawArc(circs[0]->getPosition(), circs[1]->getPosition(), *circs[1], 0);
+		drawsText(temp.x, temp.y, s.c_str(), GLUT_BITMAP_HELVETICA_18);
+		
+		temp = drawArc(circs[1]->getPosition(), circs[2]->getPosition(), *circs[2], 0);
+		drawsText(temp.x, temp.y, "E,delta -> E", GLUT_BITMAP_HELVETICA_18);
+		
+		temp = circs[0]->getPosition();
+		temp = drawArc(Point2(temp.x-25, temp.y), Point2(temp.x+25, temp.y), *circs[0], -75);
+		drawsText(temp.x, temp.y, "E,E -> delta", GLUT_BITMAP_HELVETICA_18);
+
+		if (num_circles == 3) {
+
 		}
-		// // three transitions
-		if (!cfg->three[0].empty()) {
-			drawProductions(cfg->three[0], 30, 470);
-			drawProductions(cfg->three[1], 100, 470);
-			drawProductions(cfg->three[2], 170, 470);
+		else if (num_circles == 4) {
+			temp = drawArc(circs[1]->getPosition(), circs[3]->getPosition(), *circs[3], 35);
+			drawProductions(cfg->two[0], temp);
+			temp = drawArc(circs[3]->getPosition(), circs[1]->getPosition(), *circs[1], -35);
+			drawProductions(cfg->two[1], temp);
 		}
-		// // four transitions
-		if (!cfg->four[0].empty()) {
-			drawProductions(cfg->four[0], 300, 470);
-			drawProductions(cfg->four[1], 370, 470);
-			drawProductions(cfg->four[2], 440, 470);
-			drawProductions(cfg->four[3], 510, 470);
+		else if (num_circles == 5) {
+			temp = drawArc(circs[1]->getPosition(), circs[3]->getPosition(), *circs[3], 0);
+			drawProductions(cfg->three[0], temp);
+			temp = drawArc(circs[3]->getPosition(), circs[4]->getPosition(), *circs[4], 0);
+			drawProductions(cfg->three[1], temp);
+			temp = drawArc(circs[4]->getPosition(), circs[1]->getPosition(), *circs[1], 0);
+			drawProductions(cfg->three[2], temp);
+		}
+		else if (num_circles == 6) {
+			if (!cfg->four[0].empty()) {
+				temp = drawArc(circs[1]->getPosition(), circs[3]->getPosition(), *circs[3], 0);
+				drawProductions(cfg->four[0], temp);
+				temp = drawArc(circs[3]->getPosition(), circs[4]->getPosition(), *circs[4], 0);
+				drawProductions(cfg->four[1], temp);
+				temp = drawArc(circs[4]->getPosition(), circs[5]->getPosition(), *circs[5], 0);
+				drawProductions(cfg->four[2], temp);
+				temp = drawArc(circs[5]->getPosition(), circs[1]->getPosition(), *circs[1], 0);
+				drawProductions(cfg->four[3], temp);
+			}
+			else {
+			temp = drawArc(circs[1]->getPosition(), circs[3]->getPosition(), *circs[3], 35);
+			drawProductions(cfg->two[0], temp);
+			temp = drawArc(circs[3]->getPosition(), circs[1]->getPosition(), *circs[1], -35);
+			drawProductions(cfg->two[1], temp);
+
+			temp = drawArc(circs[1]->getPosition(), circs[4]->getPosition(), *circs[4], 0);
+			drawProductions(cfg->three[0], temp);
+			temp = drawArc(circs[4]->getPosition(), circs[5]->getPosition(), *circs[5], 0);
+			drawProductions(cfg->three[1], temp);
+			temp = drawArc(circs[5]->getPosition(), circs[1]->getPosition(), *circs[1], 0);
+			drawProductions(cfg->three[2], temp);
+			}
+		}
+		else if (num_circles == 7) {
+			temp = drawArc(circs[1]->getPosition(), circs[3]->getPosition(), *circs[3], 35);
+			drawProductions(cfg->two[0], temp);
+			temp = drawArc(circs[3]->getPosition(), circs[1]->getPosition(), *circs[1], -35);
+			drawProductions(cfg->two[1], temp);
+
+			temp = drawArc(circs[1]->getPosition(), circs[4]->getPosition(), *circs[4], 0);
+			drawProductions(cfg->four[0], temp);
+			temp = drawArc(circs[4]->getPosition(), circs[5]->getPosition(), *circs[5], 0);
+			drawProductions(cfg->four[1], temp);
+			temp = drawArc(circs[5]->getPosition(), circs[6]->getPosition(), *circs[6], 0);
+			drawProductions(cfg->four[2], temp);
+			temp = drawArc(circs[6]->getPosition(), circs[1]->getPosition(), *circs[1], 0);
+			drawProductions(cfg->four[3], temp);
+		}
+		else if (num_circles == 8) {
+			temp = drawArc(circs[1]->getPosition(), circs[3]->getPosition(), *circs[3], 0);
+			drawProductions(cfg->three[0], temp);
+			temp = drawArc(circs[3]->getPosition(), circs[4]->getPosition(), *circs[4], 0);
+			drawProductions(cfg->three[1], temp);
+			temp = drawArc(circs[4]->getPosition(), circs[1]->getPosition(), *circs[1], 0);
+			drawProductions(cfg->three[2], temp);
+
+			temp = drawArc(circs[1]->getPosition(), circs[5]->getPosition(), *circs[5], 0);
+			drawProductions(cfg->four[0], temp);
+			temp = drawArc(circs[5]->getPosition(), circs[6]->getPosition(), *circs[6], 0);
+			drawProductions(cfg->four[1], temp);
+			temp = drawArc(circs[6]->getPosition(), circs[7]->getPosition(), *circs[7], 0);
+			drawProductions(cfg->four[2], temp);
+			temp = drawArc(circs[7]->getPosition(), circs[1]->getPosition(), *circs[1], 0);
+			drawProductions(cfg->four[3], temp);
+		}
+		else if (num_circles == 9) {
+			temp = drawArc(circs[1]->getPosition(), circs[3]->getPosition(), *circs[3], 35);
+			drawProductions(cfg->two[0], temp);
+			temp = drawArc(circs[3]->getPosition(), circs[1]->getPosition(), *circs[1], -35);
+			drawProductions(cfg->two[1], temp);
+
+			temp = drawArc(circs[1]->getPosition(), circs[4]->getPosition(), *circs[4], 0);
+			drawProductions(cfg->three[0], temp);
+			temp = drawArc(circs[4]->getPosition(), circs[5]->getPosition(), *circs[5], 0);
+			drawProductions(cfg->three[1], temp);
+			temp = drawArc(circs[5]->getPosition(), circs[1]->getPosition(), *circs[1], 0);
+			drawProductions(cfg->three[2], temp);
+
+			temp = drawArc(circs[1]->getPosition(), circs[6]->getPosition(), *circs[6], 0);
+			drawProductions(cfg->four[0], temp);
+			temp = drawArc(circs[6]->getPosition(), circs[7]->getPosition(), *circs[7], 0);
+			drawProductions(cfg->four[1], temp);
+			temp = drawArc(circs[7]->getPosition(), circs[8]->getPosition(), *circs[8], 0);
+			drawProductions(cfg->four[2], temp);
+			temp = drawArc(circs[8]->getPosition(), circs[1]->getPosition(), *circs[1], 0);
+			drawProductions(cfg->four[3], temp);
 		}
 
-		drawsText(350, 390, "E,delta -> E", GLUT_BITMAP_HELVETICA_18);
+		for (int i = 0; i < num_circles; ++i) {
+			circs2[i]->draw();
+			circs[i]->draw();
+		}
+
 	}
 	glutSwapBuffers();
 }
@@ -237,7 +454,7 @@ void keyboard( unsigned char c, int x, int y ) {
 			}
 
 
-			exitAll();
+			// exitAll();
 			break;
 		default:
 			break;
@@ -245,7 +462,7 @@ void keyboard( unsigned char c, int x, int y ) {
 	}
 	glutPostRedisplay();
 }
-
+ // start screen
 void mouse0(int mouseButton, int state, int x, int y) {
 
 	mouseCoords(x, y);
@@ -300,6 +517,7 @@ void mouse0(int mouseButton, int state, int x, int y) {
 	glutPostRedisplay();
 }
 
+// quit screen
 void mouse1(int mouseButton, int state, int x, int y) {
 
 	mouseCoords(x, y);
@@ -333,6 +551,7 @@ void mouse1(int mouseButton, int state, int x, int y) {
 	glutPostRedisplay();
 }
 
+// new or load screen
 void mouse2(int mouseButton, int state, int x, int y) {
 
 	mouseCoords(x, y);
@@ -389,6 +608,108 @@ void mouse2(int mouseButton, int state, int x, int y) {
 	glutPostRedisplay();
 }
 
+// called after user clicks 'go' from cfg entry screen or load file screen
+void make_circles() {
+	num_circles = 3;
+	if (!cfg->two[0].empty())
+		num_circles+=1;
+	if (!cfg->three[0].empty())
+		num_circles+=2;
+	if (!cfg->four[0].empty())
+		num_circles+=3;
+
+	circs = new Circle*[num_circles];
+	circs2 = new Circle*[num_circles];
+	
+	circs[0] = new Circle(Point2(75, 350), 40, "Qstart");
+	circs[1] = new Circle(Point2(350, 350), 50, "Qloop");
+	circs[2] = new Circle(Point2(120, 500), 40, "Qaccept");
+	circs2[0] = new Circle(Point2(75, 350), Color(0, 0, 0), 42, "");
+	circs2[1] = new Circle(Point2(350, 350), Color(0, 0, 0), 52, "");
+	circs2[2] = new Circle(Point2(120, 500), Color(0, 0, 0), 42, "");
+	if (num_circles == 3) {
+		circs[2] = new Circle(Point2(610, 350), 40, "Qaccept");
+		circs2[2] = new Circle(Point2(610, 350), Color(0, 0, 0), 42, "");
+	}
+	else if (num_circles == 4) {
+		circs[2] = new Circle(Point2(350, 165), 40, "Qaccept");
+		circs2[2] = new Circle(Point2(350, 165), Color(0, 0, 0), 42, "");
+		circs[3] = new Circle(Point2(625, 350), 25, "Q1");
+		circs2[3] = new Circle(Point2(625, 350), Color(0, 0, 0), 27, "");
+	}
+	else if (num_circles == 5) {
+		circs[2] = new Circle(Point2(350, 165), 40, "Qaccept");
+		circs2[2] = new Circle(Point2(350, 165), Color(0, 0, 0), 42, "");
+		circs[3] = new Circle(Point2(570, 260), 25, "Q1");
+		circs[4] = new Circle(Point2(570, 455), 25, "Q2");
+		circs2[3] = new Circle(Point2(570, 260), Color(0, 0, 0), 27, "");
+		circs2[4] = new Circle(Point2(570, 455), Color(0, 0, 0), 27, "");
+	}
+	else if (num_circles == 6) {
+		if (!cfg->four[0].empty()) {
+			circs[2] = new Circle(Point2(350, 165), 40, "Qaccept");
+			circs2[2] = new Circle(Point2(350, 165), Color(0, 0, 0), 42, "");
+			circs[3] = new Circle(Point2(530, 220), 25, "Q1");
+			circs[4] = new Circle(Point2(650, 350), 25, "Q2");
+			circs[5] = new Circle(Point2(530, 490), 25, "Q3");
+			circs2[3] = new Circle(Point2(530, 220), Color(0, 0, 0), 27, "");
+			circs2[4] = new Circle(Point2(650, 350), Color(0, 0, 0), 27, "");
+			circs2[5] = new Circle(Point2(530, 490), Color(0, 0, 0), 27, "");
+		}
+		else {
+			circs[2] = new Circle(Point2(235, 155), 40, "Qaccept");
+			circs2[2] = new Circle(Point2(235, 155), Color(0, 0, 0), 42, "");
+			circs[3] = new Circle(Point2(560, 200), 25, "Q1");
+			circs[4] = new Circle(Point2(590, 410), 25, "Q2");
+			circs[5] = new Circle(Point2(525, 520), 25, "Q3");
+			circs2[3] = new Circle(Point2(560, 200), Color(0, 0, 0), 27, "");
+			circs2[4] = new Circle(Point2(590, 410), Color(0, 0, 0), 27, "");
+			circs2[5] = new Circle(Point2(525, 520), Color(0, 0, 0), 27, "");
+		}
+	}
+	else if (num_circles == 7) {
+			circs[2] = new Circle(Point2(450, 140), 40, "Qaccept");
+			circs2[2] = new Circle(Point2(450, 140), Color(0, 0, 0), 42, "");
+			circs[3] = new Circle(Point2(160, 150), 25, "Q1");
+			circs[4] = new Circle(Point2(595, 300), 25, "Q2");
+			circs[5] = new Circle(Point2(650, 455), 25, "Q3");
+			circs[6] = new Circle(Point2(530, 560), 25, "Q4");
+			circs2[3] = new Circle(Point2(160, 150), Color(0, 0, 0), 27, "");
+			circs2[4] = new Circle(Point2(595, 300), Color(0, 0, 0), 27, "");
+			circs2[5] = new Circle(Point2(650, 455), Color(0, 0, 0), 27, "");
+			circs2[6] = new Circle(Point2(530, 560), Color(0, 0, 0), 27, "");
+	}
+	else if (num_circles == 8) {
+			circs[3] = new Circle(Point2(290, 155), 25, "Q1");
+			circs[4] = new Circle(Point2(420, 155), 25, "Q2");
+			circs[5] = new Circle(Point2(570, 280), 25, "Q3");
+			circs[6] = new Circle(Point2(640, 420), 25, "Q4");
+			circs[7] = new Circle(Point2(525, 510), 25, "Q5");
+			circs2[3] = new Circle(Point2(329, 155), Color(0, 0, 0), 27, "");
+			circs2[4] = new Circle(Point2(420, 155), Color(0, 0, 0), 27, "");
+			circs2[5] = new Circle(Point2(570, 280), Color(0, 0, 0), 27, "");
+			circs2[6] = new Circle(Point2(640, 420), Color(0, 0, 0), 27, "");
+			circs2[7] = new Circle(Point2(525, 510), Color(0, 0, 0), 27, "");
+	}
+	else if (num_circles == 9) {
+			circs[3] = new Circle(Point2(180, 170), 25, "Q1");
+			circs[4] = new Circle(Point2(365, 125), 25, "Q2");
+			circs[5] = new Circle(Point2(510, 175), 25, "Q3");
+			circs[6] = new Circle(Point2(585, 290), 25, "Q4");
+			circs[7] = new Circle(Point2(590, 430), 25, "Q5");
+			circs[8] = new Circle(Point2(520, 445), 25, "Q6");
+			circs2[3] = new Circle(Point2(180, 170), Color(0, 0, 0), 27, "");
+			circs2[4] = new Circle(Point2(365, 125), Color(0, 0, 0), 27, "");
+			circs2[5] = new Circle(Point2(510, 175), Color(0, 0, 0), 27, "");
+			circs2[6] = new Circle(Point2(585, 290), Color(0, 0, 0), 27, "");
+			circs2[7] = new Circle(Point2(590, 430), Color(0, 0, 0), 27, "");
+			circs2[8] = new Circle(Point2(520, 445), Color(0, 0, 0), 27, "");
+	}
+	else
+		cout << "error" << endl;
+}
+
+// load file screen
 void mouse3(int mouseButton, int state, int x, int y) {
 
 	mouseCoords(x, y);
@@ -439,6 +760,8 @@ void mouse3(int mouseButton, int state, int x, int y) {
 				// for (int i = 0; i < num_new_textboxes; ++i) {
 				// 	cout << productions[i] << endl;
 				// }
+				if (cfg->good) 
+					make_circles();
 				WinArray[5]->set_previous_id(3);
 				WinArray[3]->undraw();
 				createNewWindow(*WinArray[5], *WinArray[3]);
@@ -457,6 +780,23 @@ void mouse3(int mouseButton, int state, int x, int y) {
 	glutPostRedisplay();
 }
 
+void init_circles(string filename) {
+	string temp;
+	ifstream f(filename.c_str());
+	while (f >> temp) {
+		if (temp == "PDA")
+			break;
+	}
+	f >> num_circles;
+	int x, y;
+	for (int i = 0; i < num_circles; ++i) {
+		f >> x >> y;
+		circs[i]->setPosition(x, y);
+		circs2[i]->setPosition(x, y);
+	}
+}
+
+// cfg entry screen
 void mouse4(int mouseButton, int state, int x, int y) {
 
 	mouseCoords(x, y);
@@ -494,6 +834,12 @@ void mouse4(int mouseButton, int state, int x, int y) {
 				WinArray[4]->undraw();
 				string newfile = WinArray[4]->get_text_in_box(0);
 				cfg = new CFG(newfile.c_str());
+				if (cfg->good) {
+					make_circles();
+					if (cfg->pda) {
+						init_circles(newfile);
+					}
+				}
 				createNewWindow(*WinArray[5], *WinArray[4]);
 			}
 			else if (button_id == "Help") {
@@ -512,6 +858,7 @@ void mouse4(int mouseButton, int state, int x, int y) {
 	glutPostRedisplay();
 }
 
+// PDA viewer screen
 void mouse5(int mouseButton, int state, int x, int y) {
 
 	mouseCoords(x, y);
@@ -520,10 +867,20 @@ void mouse5(int mouseButton, int state, int x, int y) {
 		if (GLUT_DOWN == state ) {
 		// the user just pressed down on the mouse-- do something
 			mouseIsDragging = true;
+			for (int i = 0; i < num_circles; ++i) {
+				if (circs2[i]->containsPoint(x, y)) {
+					circle_clicked = true;
+					clicked_circle = i;
+					break;
+				}
+			}
 			WinArray[5]->buttons_mousepress(mouseButton, state, x, y);
 		}
 		else {
 			// the user just let up on the button-- do something
+			// cout << clicked_circle << " " << x << " " << y << endl;
+			circle_clicked = false;
+			clicked_circle = -1;
 			mouseIsDragging = false;
 			string button_id = WinArray[5]->get_clicked();
 			WinArray[5]->reset_clicks();
@@ -562,6 +919,17 @@ void mouse5(int mouseButton, int state, int x, int y) {
 	glutPostRedisplay();
 }
 
+void save_pda(string filename) {
+	ofstream o;
+	o.open(filename.c_str(), ios::out | ios::app);
+	o << "PDA" << endl;
+	o << num_circles << endl;
+	for (int i = 0; i < num_circles; ++i) {
+		o << circs[i]->getPosition().x << " " << circs[i]->getPosition().y << endl;
+	}
+}
+
+// save file screen
 void mouse6(int mouseButton, int state, int x, int y) {
 
 	mouseCoords(x, y);
@@ -595,7 +963,19 @@ void mouse6(int mouseButton, int state, int x, int y) {
 					WinArray[6]->set_err_bool(1);
 				}
 				else {
+					save_pda(savefile);
 					WinArray[6]->set_err_bool(0);
+					// WinArray[current]->undraw();
+					if (!WinArray[1]->get_exists()) {
+					// glutPostRedisplay();
+						createNewWindow(*WinArray[1], *WinArray[0]);
+						WinArray[1]->set_exists(1);
+					}
+					// They've already created a Quit window and they're trying to create another. :(
+					else if (WinArray[1]->get_exists()) {
+						WinArray[1]->undraw();
+						createNewWindow(*WinArray[1], *WinArray[0]);
+					}
 				}
 			}
 			else {
@@ -608,7 +988,7 @@ void mouse6(int mouseButton, int state, int x, int y) {
 	}
 	glutPostRedisplay();
 }
-
+ // help menu 1
 void mouse7(int mouseButton, int state, int x, int y) {
 
 	mouseCoords(x, y);
@@ -655,6 +1035,7 @@ void mouse7(int mouseButton, int state, int x, int y) {
 	glutPostRedisplay();
 }
 
+// help menu 2
 void mouse8(int mouseButton, int state, int x, int y) {
 
 	mouseCoords(x, y);
@@ -706,6 +1087,7 @@ void mouse8(int mouseButton, int state, int x, int y) {
 	glutPostRedisplay();
 }
 
+// help menu 3
 void mouse9(int mouseButton, int state, int x, int y) {
 
 	mouseCoords(x, y);
@@ -757,6 +1139,7 @@ void mouse9(int mouseButton, int state, int x, int y) {
 	glutPostRedisplay();
 }
 
+// help menu 3
 void mouse10(int mouseButton, int state, int x, int y) {
 
 	mouseCoords(x, y);
@@ -808,6 +1191,7 @@ void mouse10(int mouseButton, int state, int x, int y) {
 	glutPostRedisplay();
 }
 
+// help menu 3
 void mouse11(int mouseButton, int state, int x, int y) {
 
 	mouseCoords(x, y);
@@ -893,6 +1277,11 @@ void mouse_motion(int x, int y) {
 		}
 	}
 	if (current != 12) {
+		if (current == 5 && mouseIsDragging && circle_clicked && (clicked_circle != -1)) {
+			// cout << "hi" << endl;
+			circs2[clicked_circle]->update(x, y);
+			circs[clicked_circle]->update(x, y);
+		}
 
 		int screen_pos_x = glutGet((GLenum)GLUT_WINDOW_X);
 		int screen_pos_y = glutGet((GLenum)GLUT_WINDOW_Y);

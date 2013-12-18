@@ -11,7 +11,7 @@ TextboxArray::TextboxArray() {
 TextboxArray::TextboxArray(const char * filename) {
 	ifstream g (filename);
 	if( !g.good() ) {
-		cout << "loadbutton issue" << endl;
+		// cout << "loadbutton issue" << endl;
 		cerr << "Warning: Unable to open " << filename << ", ignoring it." << endl;
 		return;
 	}

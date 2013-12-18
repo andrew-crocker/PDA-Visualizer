@@ -8,6 +8,7 @@ class Circle: public Shape {
  public:
   Circle();
   Circle(Point2 p, Color c, int r, string);
+  Circle(Point2 p, int r, string);
   Circle(istream &is);
   string label;
   void display();
@@ -15,6 +16,9 @@ class Circle: public Shape {
   void draw();
   virtual bool containsPoint(int x, int y);
   virtual void update(int x, int y);
+  Point2 getPosition();
+  void setPosition(int, int);
+  int getRadius();
 };
 
 #endif // _Circle_

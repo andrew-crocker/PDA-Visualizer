@@ -11,6 +11,7 @@ class Shape {
  public:
   Shape();
   Shape(Point2 p, Color c);
+  Shape(Point2 p);
   Shape(istream &is);
   Color getColor() const;
   Point2 getPosition() const;

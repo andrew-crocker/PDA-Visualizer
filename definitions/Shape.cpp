@@ -5,7 +5,7 @@ using namespace std;
 
 extern double distance(int, int, Point2);
 
-Color Shape::DEFAULT_COLOR(0, 0, 255);
+Color Shape::DEFAULT_COLOR(1, 1, 1);
 Point2 Shape::DEFAULT_POSITION(100, 100);
 
 Shape::Shape () {
@@ -15,6 +15,11 @@ Shape::Shape () {
 
 Shape::Shape (Point2 p, Color c) {
 	color = c;
+	position = p;
+}
+
+Shape::Shape(Point2 p) {
+	color = DEFAULT_COLOR;
 	position = p;
 }
 
@@ -51,9 +56,10 @@ void Shape::display() {
 }
 
 void Shape::sendGLColor() {
-	glColor3f(color.red/255.0, color.green/255.0, color.blue/255.0);
+	glColor3f(color.red, color.green, color.blue);
 }
 
 void Shape::sendGLColor(Color c) {
-	glColor3f(c.red/255.0, c.green/255.0, c.blue/255.0);
+	// cout << "hi" << endl;
+	glColor3f(c.red, c.green, c.blue);
 }

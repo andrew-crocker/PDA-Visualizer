@@ -28,6 +28,7 @@ class CFG {
 public:
 	char start_state;
 	int good;
+	int pda;
 	string error;
 	// making these vectors public for convenience
 	vector<RPP> one;

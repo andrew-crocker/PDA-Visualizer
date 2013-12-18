@@ -44,6 +44,13 @@ CFG::CFG(const char * filename) {
   			productions[i].push_back(s);
   	} 
 
+    string PDA;
+    f >> PDA;
+    if (PDA == "PDA")
+      pda = 1;
+    else
+      pda = 0;
+
   	f.close();
 
   	if (this->isGood())  {
@@ -121,7 +128,7 @@ int CFG::save(string filename) {
 			if (j < productions[i].size()-1)
 				f << ' ';
 		}
-		if (i < productions.size()-1)
+		// if (i < productions.size()-1)
 			f << '\n';
 	}
 
