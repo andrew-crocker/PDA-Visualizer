@@ -23,6 +23,7 @@ Circle ** circs2;
 int num_circles;
 bool circle_clicked = 0;
 int clicked_circle = -1;
+int global_x, global_y;
 
 void createNewWindow(Window &, Window);
 
@@ -781,6 +782,9 @@ void mouse3(int mouseButton, int state, int x, int y) {
 }
 
 void init_circles(string filename) {
+	string tempfilename = "savedCFGs/";
+	tempfilename += filename;
+	filename = tempfilename;
 	string temp;
 	ifstream f(filename.c_str());
 	while (f >> temp) {
@@ -874,6 +878,10 @@ void mouse5(int mouseButton, int state, int x, int y) {
 					break;
 				}
 			}
+			if (!circle_clicked) {
+				global_x = x;
+				global_y = y;
+			}
 			WinArray[5]->buttons_mousepress(mouseButton, state, x, y);
 		}
 		else {
@@ -920,6 +928,9 @@ void mouse5(int mouseButton, int state, int x, int y) {
 }
 
 void save_pda(string filename) {
+	string tempfilename = "savedCFGs/";
+	tempfilename += filename;
+	filename = tempfilename;
 	ofstream o;
 	o.open(filename.c_str(), ios::out | ios::app);
 	o << "PDA" << endl;
@@ -1282,6 +1293,15 @@ void mouse_motion(int x, int y) {
 			circs2[clicked_circle]->update(x, y);
 			circs[clicked_circle]->update(x, y);
 		}
+		// else if (current == 5 && mouseIsDragging && !circle_clicked && (clicked_circle == -1)) {
+		// 	int dx, dy;
+		// 	dx = global_x-x;
+		// 	dy = global_y-y;
+		// 	for (int i = 0; i < num_circles; ++i) {
+		// 		circs2[i]->update(circs2[i]->getPosition().x+dx, circs2[i]->getPosition().y+y);
+		// 		circs[i]->update(circs[i]->getPosition().x+dx, circs[i]->getPosition().y+y);
+		// 	}
+		// }
 
 		int screen_pos_x = glutGet((GLenum)GLUT_WINDOW_X);
 		int screen_pos_y = glutGet((GLenum)GLUT_WINDOW_Y);

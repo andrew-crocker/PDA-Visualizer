@@ -45,4 +45,4 @@ objects/CFG.o: headers/CFG.h definitions/CFG.cpp
 	g++ $(OPTS) -c definitions/CFG.cpp -o objects/CFG.o
 	
 clean:
-	rm $(BINARIES) objects/*.o
+	rm -f $(BINARIES) objects/*.o

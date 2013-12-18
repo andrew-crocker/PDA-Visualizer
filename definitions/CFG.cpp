@@ -3,11 +3,13 @@
 #include <sstream>
 
 CFG::CFG(const char * filename) {
-	ifstream f(filename);
+  string tempfilename = "savedCFGs/";
+  tempfilename += filename;
+	ifstream f(tempfilename.c_str());
 	if( !f.good() ) {
     good = 0;
     error = "Warning: Unable to open ";
-    error += filename;
+    error += tempfilename;
     error += ". Please fix it.";
 		cerr << error << endl;
 		return;
@@ -94,6 +96,9 @@ CFG::CFG(string v, string t, const char ss, vector <string> p) {
 }
 
 int CFG::save(string filename) {
+  string tempfilename = "savedCFGs/";
+  tempfilename += filename;
+  filename = tempfilename;
 	ofstream f(filename.c_str());
 	if ( !f.good() ) {
 		cerr << "Warning: Unable to open " << filename << ", ignoring it." << endl;
