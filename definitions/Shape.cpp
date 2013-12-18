@@ -1,7 +1,9 @@
 #include <iostream>
 #include <math.h>
 using namespace std;
-#include "Shape.h"
+#include "../headers/Shape.h"
+
+extern double distance(int, int, Point2);
 
 Color Shape::DEFAULT_COLOR(0, 0, 255);
 Point2 Shape::DEFAULT_POSITION(100, 100);
@@ -44,7 +46,7 @@ void Shape::setPosition(int x, int y) {
 }
 
 void Shape::display() {
-	color.display();
+	// color.display();
 	position.display();
 }
 
@@ -52,8 +54,6 @@ void Shape::sendGLColor() {
 	glColor3f(color.red/255.0, color.green/255.0, color.blue/255.0);
 }
 
-
-double distance ( int x, int y, Point2 p) {
-	double dx = p.x - x, dy = p.y - y;
-	return sqrt(dx * dx + dy * dy);
+void Shape::sendGLColor(Color c) {
+	glColor3f(c.red/255.0, c.green/255.0, c.blue/255.0);
 }

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <math.h>
 using namespace std;
 
 #ifndef _ColorPoint2_
@@ -51,6 +52,5 @@ struct Point2 {
 	}
 };
 
-double distance (int x, int y, Point2 p);
 
 #endif
