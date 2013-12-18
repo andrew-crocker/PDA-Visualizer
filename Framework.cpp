@@ -5,6 +5,7 @@
 
 #include "headers/Window.h"
 #include "headers/CFG.h"
+#include "headers/Circle.h"
 
 using namespace std;
 
@@ -17,6 +18,13 @@ Textbox * new_textboxes[6];
 CFG * cfg;
 
 void createNewWindow(Window &, Window);
+
+
+double distance (int x2, int y2, Point2 p) {
+	double dx = p.x - x2;
+	double dy = p.y - y2;
+	return sqrt(dx * dx + dy * dy);
+}
 
 // the drawText function draws some text at location x, y
 //   note:  the text to be drawn is a C-style string!
@@ -105,7 +113,10 @@ void drawWindow5() {
 	WinArray[5]->drawWindow(0);
 	if (!cfg->good) {
 		drawsText(130, 350, cfg->error.c_str(), GLUT_BITMAP_TIMES_ROMAN_24);
-		// drawsText(100, 150, "error", GLUT_BITMAP_HELVETICA_12);
+	}
+	else {
+		Circle c;
+		c.draw();
 	}
 	else {
 		// draw text for q_s loop

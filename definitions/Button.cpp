@@ -2,6 +2,8 @@
 #include "../headers/Button.h"
 using namespace std;
 
+extern double distance(int, int, Point2);
+
 const int Button::DEFAULT_WIDTH = 0;
 const int Button::DEFAULT_HEIGHT = 0;
 const string Button::DEFAULT_LABEL = "";
@@ -195,9 +197,4 @@ bool Button::getClicked() {
 
 string Button::getLabel() {
 	return label;
-}
-
-double distance ( int x, int y, Point2 p) {
-	double dx = p.x - x, dy = p.y - y;
-	return sqrt(dx * dx + dy * dy);
 }
