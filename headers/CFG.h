@@ -24,9 +24,9 @@ struct RPP {
 class CFG {
 	vector<char> variables;
 	vector<char> terminals;
-	char start_state;
 	vector< vector<string> > productions;
 public:
+	char start_state;
 	int good;
 	string error;
 	// making these vectors public for convenience

@@ -215,27 +215,27 @@ void CFG::makeStructure() {
 					one.push_back(*rpp);
 					break;
 				case(2):
-					rpp = new RPP('E', variables[i], productions[i][j][0]);
+					rpp = new RPP('E', variables[i], productions[i][j][1]);
 					two[0].push_back(*rpp);
-					rpp2 = new RPP('E', 'E', productions[i][j][1]);
+					rpp2 = new RPP('E', 'E', productions[i][j][0]);
 					two[1].push_back(*rpp2);
 					break;
 				case(3):
-					rpp = new RPP('E', variables[i], productions[i][j][0]);
+					rpp = new RPP('E', variables[i], productions[i][j][2]);
 					three[0].push_back(*rpp);
 					rpp2 = new RPP('E', 'E', productions[i][j][1]);
 					three[1].push_back(*rpp2);
-					rpp3 = new RPP('E', 'E', productions[i][j][2]);
+					rpp3 = new RPP('E', 'E', productions[i][j][0]);
 					three[2].push_back(*rpp3);
 					break;
 				case(4):
-					rpp = new RPP('E', variables[i], productions[i][j][0]);
+					rpp = new RPP('E', variables[i], productions[i][j][3]);
 					four[0].push_back(*rpp);
-					rpp2 = new RPP('E', 'E', productions[i][j][1]);
+					rpp2 = new RPP('E', 'E', productions[i][j][2]);
 					four[1].push_back(*rpp2);
-					rpp3 = new RPP('E', 'E', productions[i][j][2]);
+					rpp3 = new RPP('E', 'E', productions[i][j][1]);
 					four[2].push_back(*rpp3);
-					rpp4 = new RPP('E', 'E', productions[i][j][3]);
+					rpp4 = new RPP('E', 'E', productions[i][j][0]);
 					four[3].push_back(*rpp4);
 					break;
 			}

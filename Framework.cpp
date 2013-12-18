@@ -89,11 +89,53 @@ void drawWindow4() {
 	WinArray[4]->drawWindow(1);
 }
 
+void drawProductions(vector <RPP> rpp, int x, int y) {
+	string buff;
+	for (int i=0; i < rpp.size(); i++) {
+		buff = rpp[i].read;
+		buff += ',';
+		buff += rpp[i].pop;
+		buff += " -> ";
+		buff += rpp[i].push;
+		drawsText(x, y-(19*i), buff.c_str(), GLUT_BITMAP_HELVETICA_18);
+	}
+}
+
 void drawWindow5() {
 	WinArray[5]->drawWindow(0);
 	if (!cfg->good) {
 		drawsText(130, 350, cfg->error.c_str(), GLUT_BITMAP_TIMES_ROMAN_24);
 		// drawsText(100, 150, "error", GLUT_BITMAP_HELVETICA_12);
+	}
+	else {
+		// draw text for q_s loop
+		drawsText(50, 325, "E,E -> delta", GLUT_BITMAP_HELVETICA_18);
+		// draw start state transition
+		string s = "E,E -> ";
+		s += cfg->start_state;
+		drawsText(75, 350, s.c_str(), GLUT_BITMAP_HELVETICA_18);
+		// draw productions with only one transition
+		drawProductions(cfg->one, 350, 325);
+		// // now draw productions with two transitions
+		if (!cfg->two[0].empty()) {
+			drawProductions(cfg->two[0], 420, 325);
+			drawProductions(cfg->two[1], 490, 325);
+		}
+		// // three transitions
+		if (!cfg->three[0].empty()) {
+			drawProductions(cfg->three[0], 30, 470);
+			drawProductions(cfg->three[1], 100, 470);
+			drawProductions(cfg->three[2], 170, 470);
+		}
+		// // four transitions
+		if (!cfg->four[0].empty()) {
+			drawProductions(cfg->four[0], 300, 470);
+			drawProductions(cfg->four[1], 370, 470);
+			drawProductions(cfg->four[2], 440, 470);
+			drawProductions(cfg->four[3], 510, 470);
+		}
+
+		drawsText(350, 390, "E,delta -> E", GLUT_BITMAP_HELVETICA_18);
 	}
 	glutSwapBuffers();
 }
@@ -530,20 +572,20 @@ void mouse6(int mouseButton, int state, int x, int y) {
 				createNewWindow(*WinArray[5], *WinArray[6]);
 			}
 			else if (button_id == "Save") {
-				//int ret;
+				int ret;
 				string savefile = WinArray[6]->get_text_in_box(0);
 				// cout << "Saving to " << savefile << endl;
-				// if ((ret = cfg.save(savefile)) < 0) {
+				if ((ret = cfg->save(savefile)) < 0) {
 					string err_mesg;
 					err_mesg = "Error saving to ";
 					err_mesg += savefile;
 					err_mesg += ". Please try again.";
 					WinArray[6]->set_err_mesg(err_mesg, 25, 90, GLUT_BITMAP_HELVETICA_12);
 					WinArray[6]->set_err_bool(1);
-				// }
-					// else {
-					// 	WinArray[6]->set_err_bool(0);
-					// }
+				}
+				else {
+					WinArray[6]->set_err_bool(0);
+				}
 			}
 			else {
 				// cout << glutGetWindow() << endl;
