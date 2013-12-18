@@ -2,13 +2,16 @@
 
 #include <sstream>
 
-CFG::CFG(const char *filename) {
+CFG::CFG(const char * filename) {
 	ifstream f(filename);
 	if( !f.good() ) {
-		cerr << "Warning: Unable to open " << filename << ", ignoring it." << endl;
+    good = 0;
+    error = "Warning: Unable to open ";
+    error += filename;
+    error += ". Please fix it.";
+		cerr << error << endl;
 		return;
   	}
-  	
   	string buff;
 	char tmp;
 
@@ -31,7 +34,7 @@ CFG::CFG(const char *filename) {
   	// get productions
   	productions.resize(variables.size());
   	
-  	for (int i=0; productions.size(); i++) {
+  	for (int i=0; i < productions.size(); i++) {
   		string s;
   		char buff;
   		getline(f, s);
@@ -47,7 +50,9 @@ CFG::CFG(const char *filename) {
   		good = 1;
   		this->makeStructure();
   	}
-  	good = 0;
+    else {
+    	good = 0;
+    }
 }
 
 CFG::CFG(string v, string t, const char ss, vector <string> p) {
@@ -76,7 +81,9 @@ CFG::CFG(string v, string t, const char ss, vector <string> p) {
 		good = 1;
 		this->makeStructure();
 	}
-	good = 0;
+  else {
+  	good = 0;
+  }
 }
 
 int CFG::save(string filename) {
@@ -127,15 +134,17 @@ int CFG::isGood() {
 	// check if any of the productions are empty
 	for (int i=0; i < productions.size(); i++) {
 		if (productions[i].empty()) {
-			error += "Error: There are no productions for ";
+			error = "Error: There are no productions for ";
 			error += variables[i];
+      cout << error << endl;
 			return 0;
 		}
 	}
 	// no capital E's in variables
 	for (int i=0; i < variables.size(); i++) {
 		if (variables[i] == 'E') {
-			error += "Error: 'E' cannot be used as a variable";
+			error = "Error: 'E' cannot be used as a variable";
+      cout << error << endl;
 			return 0;
 		}
 	}
@@ -148,7 +157,8 @@ int CFG::isGood() {
 		}
 	}
 	if (!in) {
-		error += "Error!: The start state was not entered as a variable";
+		error = "Error!: The start state was not entered as a variable";
+      cout << error << endl;
 		return 0;
 	}
 	// check if any of the characters in productions aren't a variable, terminal, or E
@@ -157,9 +167,10 @@ int CFG::isGood() {
 			for (int k=0; k < productions[i][j].size(); k++) {
 				char c = productions[i][j][k];
 				if (!validChar(c)) {
-					error += "Error: ";
+					error = "Error: ";
 					error += c;
 					error += " is not a valid character";
+      cout << error << endl;
 					return 0;
 				}
 			}

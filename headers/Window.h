@@ -39,7 +39,7 @@ public:
 	Window(istream &);
 	// ~Window();
 	void loadButtons(const char *);
-	void drawWindow();
+	void drawWindow(bool);
 	int get_width();
 	int get_height();
 	int get_current_id();

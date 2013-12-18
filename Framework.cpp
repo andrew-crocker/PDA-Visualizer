@@ -18,6 +18,15 @@ CFG * cfg;
 
 void createNewWindow(Window &, Window);
 
+// the drawText function draws some text at location x, y
+//   note:  the text to be drawn is a C-style string!
+void drawsText(int x, int y, const char *text, void * font) {
+	glRasterPos2f( x, y );
+	int length = strlen(text);
+	for (int i = 0; i < length; i++)
+	    glutBitmapCharacter(font, text[i]);
+}
+
 void loadWindows(const char * filename ) {
   ifstream g (filename);
   if( !g.good() ) {
@@ -61,51 +70,56 @@ void mouseCoords(int &x, int&y)
 }
 
 void drawWindow0() {
-	WinArray[0]->drawWindow();
+	WinArray[0]->drawWindow(1);
 }
 
 void drawWindow1() {
-	WinArray[1]->drawWindow();
+	WinArray[1]->drawWindow(1);
 }
 
 void drawWindow2() {
-	WinArray[2]->drawWindow();
+	WinArray[2]->drawWindow(1);
 }
 
 void drawWindow3() {
-	WinArray[3]->drawWindow();
+	WinArray[3]->drawWindow(1);
 }
 
 void drawWindow4() {
-	WinArray[4]->drawWindow();
+	WinArray[4]->drawWindow(1);
 }
 
 void drawWindow5() {
-	WinArray[5]->drawWindow();
+	WinArray[5]->drawWindow(0);
+	if (!cfg->good) {
+		drawsText(130, 350, cfg->error.c_str(), GLUT_BITMAP_TIMES_ROMAN_24);
+		// drawsText(100, 150, "error", GLUT_BITMAP_HELVETICA_12);
+	}
+	glutSwapBuffers();
 }
 
 void drawWindow6() {
-	WinArray[6]->drawWindow();
+	WinArray[6]->drawWindow(1);
 }
 
 void drawWindow7() {
-	WinArray[7]->drawWindow();
+	WinArray[7]->drawWindow(1);
 }
 
 void drawWindow8() {
-	WinArray[8]->drawWindow();
+	WinArray[8]->drawWindow(1);
 }
 
 void drawWindow9() {
-	WinArray[9]->drawWindow();
+	WinArray[9]->drawWindow(1);
 }
 
 void drawWindow10() {
-	WinArray[10]->drawWindow();
+	WinArray[10]->drawWindow(1);
 }
 
 void drawWindow11() {
-	WinArray[11]->drawWindow();
+	WinArray[11]->drawWindow(1);
 }
 
 void keyboard( unsigned char c, int x, int y ) {
@@ -367,7 +381,7 @@ void mouse3(int mouseButton, int state, int x, int y) {
 				for (int i = 0; i < num_new_textboxes; ++i) {
 					productions.push_back(WinArray[3]->get_text_in_box(i+3));
 				}
-				//cfg = new CFG(variables, terminals, start_state.c_str(), productions);
+				cfg = new CFG(variables, terminals, start_state[0], productions);
 				// cout << variables << endl << terminals << endl << start_state << endl;
 				// for (int i = 0; i < num_new_textboxes; ++i) {
 				// 	cout << productions[i] << endl;
@@ -425,6 +439,8 @@ void mouse4(int mouseButton, int state, int x, int y) {
 			else if (button_id == "Go!") {
 				WinArray[5]->set_previous_id(4);
 				WinArray[4]->undraw();
+				string newfile = WinArray[4]->get_text_in_box(0);
+				cfg = new CFG(newfile.c_str());
 				createNewWindow(*WinArray[5], *WinArray[4]);
 			}
 			else if (button_id == "Help") {

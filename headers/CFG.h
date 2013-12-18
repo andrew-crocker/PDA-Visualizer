@@ -34,7 +34,7 @@ public:
 	vector< vector<RPP> > two;   // size two
 	vector< vector<RPP> > three; // size three
 	vector< vector<RPP> > four;  // size four
-	CFG(const char *filename);
+	CFG(const char * filename);
 	CFG(string v, string t, const char ss, vector <string> p);
 	int save(string filename);
 	int isGood();

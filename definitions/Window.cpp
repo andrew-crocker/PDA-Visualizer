@@ -240,7 +240,7 @@ void Window::undraw() {
 	set_current_id(0);
 }
 
-void Window::drawWindow() {
+void Window::drawWindow(bool swap) {
 	glClear(GL_COLOR_BUFFER_BIT);
 	if (texture) {
 		drawTexture(background, 0,0, width, height);//texNum, x,y, width, height, alpha, rotation (in radians)
@@ -255,7 +255,8 @@ void Window::drawWindow() {
 		glColor3f(0, 0, 0);  // black
 		drawText(err_mesg_location.x, err_mesg_location.y, err_mesg.c_str(), font);
 	}
-	glutSwapBuffers();
+	if (swap)
+		glutSwapBuffers();
 }
 
 void Window::loadButtons(const char * filename ) {
