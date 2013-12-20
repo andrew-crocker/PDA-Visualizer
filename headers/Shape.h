@@ -17,12 +17,12 @@ class Shape {
   Point2 getPosition() const;
   void setColor(Color c);
   void setColor(int, int, int);
-  void setPosition(int x, int y);
+  void setPosition(double x, double y);
   void display();
   void sendGLColor(Color color);
   void sendGLColor();
   virtual void draw() = 0;
-  virtual void update(int x, int y) = 0;
+  virtual void update(double x, double y) = 0;
   virtual bool containsPoint(int x, int y) = 0;
 };
 

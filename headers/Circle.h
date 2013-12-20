@@ -15,11 +15,12 @@ class Circle: public Shape {
   void drawText(int, int, const char *, void *);
   void draw();
   virtual bool containsPoint(int x, int y);
-  virtual void update(int x, int y);
+  virtual void update(double x, double y);
   Point2 getPosition();
-  void setPosition(int, int);
-  int getRadius();
+  void setPosition(double, double);
+  double getRadius();
   void changeRadius(double);
+  void setRadius(double);
 };
 
 #endif // _Circle_

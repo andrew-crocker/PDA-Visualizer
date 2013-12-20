@@ -35,10 +35,27 @@ struct Color {
 	}
 };
 
-struct Point2 {
+struct Point2D {
 	int x;
 	int y;
-	Point2(int xPos = 0, int yPos = 0) {
+	Point2D(int xPos = 0, int yPos = 0) {
+		x = xPos;
+		y = yPos;
+	}
+	Point2D &operator=(const Point2D &p) {
+		x = p.x;
+		y = p.y;
+		return *this;
+	}
+	void display() {
+		cout << "Position: " << x << " " << y << endl;
+	}
+};
+
+struct Point2 {
+	double x;
+	double y;
+	Point2(double xPos = 0, double yPos = 0) {
 		x = xPos;
 		y = yPos;
 	}

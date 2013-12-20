@@ -45,7 +45,7 @@ void Shape::setColor(int r, int g, int b) {
 	color = c;
 }
 
-void Shape::setPosition(int x, int y) {
+void Shape::setPosition(double x, double y) {
 	position.x = x;
 	position.y = y;
 }

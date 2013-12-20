@@ -55,8 +55,8 @@ void Circle::draw() {
 }
 
 bool Circle::containsPoint(int x, int y) {
-  double dx = abs(x - position.x);
-  double dy = abs(y - position.y);
+  double dx = labs(x - position.x);
+  double dy = labs(y - position.y);
   double c2 = dx*dx;
   c2 += dy*dy;
   c2 = sqrt(c2);
@@ -66,7 +66,7 @@ bool Circle::containsPoint(int x, int y) {
   return (c2 <= radius);
 }
 
-void Circle::update(int x, int y) {
+void Circle::update(double x, double y) {
   // double dx = x - position.x;
   // double dy = y - position.y;
   // radius = sqrt(dx*dx + dy*dy);
@@ -78,15 +78,19 @@ Point2 Circle::getPosition() {
   return position;
 }
 
-void Circle::setPosition(int x, int y) {
+void Circle::setPosition(double x, double y) {
   position.x = x;
   position.y = y;
 }
 
-int Circle::getRadius() {
+double Circle::getRadius() {
   return radius;
 }
 
 void Circle::changeRadius(double mult) {
   radius *= mult;
+}
+
+void Circle::setRadius(double rad) {
+	radius = rad;
 }

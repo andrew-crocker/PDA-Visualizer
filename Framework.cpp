@@ -250,7 +250,8 @@ void drawWindow5() {
 		// // now draw productions with two transitions
 
 		Point2 temp = circs[1]->getPosition();
-		temp = drawArc(Point2(temp.x-35, temp.y), Point2(temp.x+35, temp.y), *circs[1], 80);
+		int rad = circs[1]->getRadius();
+		temp = drawArc(Point2(temp.x-(0.6*rad), temp.y), Point2(temp.x+(0.6*rad), temp.y), *circs[1], 1.8*rad);
 		drawProductions(cfg->one, temp);
 
 		
@@ -261,7 +262,8 @@ void drawWindow5() {
 		drawsText(temp.x, temp.y, "E,delta -> E", GLUT_BITMAP_HELVETICA_18);
 		
 		temp = circs[0]->getPosition();
-		temp = drawArc(Point2(temp.x-25, temp.y), Point2(temp.x+25, temp.y), *circs[0], -75);
+		rad = circs[0]->getRadius();
+		temp = drawArc(Point2(temp.x-(0.6*rad), temp.y), Point2(temp.x+(0.6*rad), temp.y), *circs[0], -1.8*rad);
 		drawsText(temp.x, temp.y, "E,E -> delta", GLUT_BITMAP_HELVETICA_18);
 
 		if (num_circles == 3) {
@@ -394,9 +396,39 @@ void drawWindow11() {
 	WinArray[11]->drawWindow(1);
 }
 
-void handleSpecialKeypress(int key, int x, int y) {
+void zoom(string direction) {
 	int x2 = glutGet(GLUT_WINDOW_WIDTH) / 2;
 	int y2 = glutGet(GLUT_WINDOW_HEIGHT) / 2;
+
+	for (int i = 0; i < num_circles; ++i) {
+		double y1 = circs[i]->getPosition().y;
+		double x1 = circs[i]->getPosition().x;
+		double dx = x2 - x1;
+		double dy = y2 - y1;
+
+		if (direction == "in") { // zooming in
+			if (labs(dx) > 3)
+				x1 -= dx-(dx * 0.89);
+			if (labs(dy) > 3)
+				y1 -= dy-(dy * 0.89);
+		circs[i]->changeRadius(1/0.9);
+		circs2[i]->setRadius(circs[i]->getRadius()+2);
+		}
+		else {  // zooming out
+			if (labs(dx) > 3)
+				x1 += dx-(dx * 0.9);
+			if (labs(dy) > 3)
+				y1 += dy-(dy * 0.9);
+		circs[i]->changeRadius(0.9);
+		circs2[i]->setRadius(circs[i]->getRadius()+2);
+		}
+
+		circs2[i]->update(x1, y1);
+		circs[i]->update(x1, y1);
+	}
+}
+
+void handleSpecialKeypress(int key, int x, int y) {
 	// x2 /= 2;
 	// y2 /= 2;
 	// cout << x2 << " " << y2 << endl;
@@ -404,41 +436,11 @@ void handleSpecialKeypress(int key, int x, int y) {
 	switch (key) {
 		case GLUT_KEY_UP:
 			// cout << "zooming in" << endl;
-			for (int i = 0; i < num_circles; ++i) {
-				double y1 = circs[i]->getPosition().y;
-				double x1 = circs[i]->getPosition().x;
-				double dx = x2 - x1;
-				double dy = y2 - y1;
-
-				if (labs(dx) > 3)
-					x1 -= dx-(dx * 0.9);
-				if (labs(dy) > 3)
-					y1 -= dy-(dy * 0.9);
-
-				circs2[i]->update(x1, y1);
-				circs2[i]->changeRadius(1/0.9);
-				circs[i]->update(x1, y1);
-				circs[i]->changeRadius(1/0.9);
-			}
+			zoom("in");
 			break;
 		case GLUT_KEY_DOWN:
 			// cout << "zooming out" << endl;
-			for (int i = 0; i < num_circles; ++i) {
-				double y1 = circs[i]->getPosition().y;
-				double x1 = circs[i]->getPosition().x;
-				double dx = x2 - x1;
-				double dy = y2 - y1;
-
-				if (labs(dx) > 3)
-					x1 += dx-(dx * 0.9);
-				if (labs(dy) > 3)
-					y1 += dy-(dy * 0.9);
-
-				circs2[i]->update(x1, y1);
-				circs2[i]->changeRadius(0.9);
-				circs[i]->update(x1, y1);
-				circs[i]->changeRadius(0.9);
-			}
+			zoom("out");
 			break;
 		case GLUT_KEY_LEFT:
 			//nothing yet
@@ -852,11 +854,13 @@ void init_circles(string filename) {
 			break;
 	}
 	f >> num_circles;
-	int x, y;
+	double x, y, rad;
 	for (int i = 0; i < num_circles; ++i) {
-		f >> x >> y;
+		f >> x >> y >> rad;
 		circs[i]->setPosition(x, y);
 		circs2[i]->setPosition(x, y);
+		circs[i]->setRadius(rad);
+		circs2[i]->setRadius(rad+2);
 	}
 }
 
@@ -977,6 +981,12 @@ void mouse5(int mouseButton, int state, int x, int y) {
 				WinArray[5]->undraw();
 				createNewWindow(*WinArray[6], *WinArray[5]);
 			}
+			else if (button_id == "+") {
+				zoom("in");
+			}
+			else if (button_id == "-") {
+				zoom("out");
+			}
 			else {
 				// cout << glutGetWindow() << endl;
 			}
@@ -1007,7 +1017,7 @@ void save_pda(string filename) {
 	o << "PDA" << endl;
 	o << num_circles << endl;
 	for (int i = 0; i < num_circles; ++i) {
-		o << circs[i]->getPosition().x << " " << circs[i]->getPosition().y << endl;
+		o << circs[i]->getPosition().x << " " << circs[i]->getPosition().y << " " << circs[i]->getRadius() << endl;
 	}
 }
 
