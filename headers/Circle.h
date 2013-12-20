@@ -4,11 +4,11 @@
 #include "math.h"
 
 class Circle: public Shape {
-  int radius;
+  double radius;
  public:
   Circle();
-  Circle(Point2 p, Color c, int r, string);
-  Circle(Point2 p, int r, string);
+  Circle(Point2 p, Color c, double r, string);
+  Circle(Point2 p, double r, string);
   Circle(istream &is);
   string label;
   void display();
@@ -19,6 +19,7 @@ class Circle: public Shape {
   Point2 getPosition();
   void setPosition(int, int);
   int getRadius();
+  void changeRadius(double);
 };
 
 #endif // _Circle_

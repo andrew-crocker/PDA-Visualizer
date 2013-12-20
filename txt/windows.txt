@@ -1,7 +1,7 @@
 12
 PDA Creator
 800 600
-600 500
+0 0
 67 86 100
 images/pda_creator.pam
 txt/StartButtons.txt

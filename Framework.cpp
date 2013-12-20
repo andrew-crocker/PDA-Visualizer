@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <cstdlib>
 
 #include "headers/Window.h"
 #include "headers/CFG.h"
@@ -393,6 +394,65 @@ void drawWindow11() {
 	WinArray[11]->drawWindow(1);
 }
 
+void handleSpecialKeypress(int key, int x, int y) {
+	int x2 = glutGet(GLUT_WINDOW_WIDTH) / 2;
+	int y2 = glutGet(GLUT_WINDOW_HEIGHT) / 2;
+	// x2 /= 2;
+	// y2 /= 2;
+	// cout << x2 << " " << y2 << endl;
+
+	switch (key) {
+		case GLUT_KEY_UP:
+			// cout << "zooming in" << endl;
+			for (int i = 0; i < num_circles; ++i) {
+				double y1 = circs[i]->getPosition().y;
+				double x1 = circs[i]->getPosition().x;
+				double dx = x2 - x1;
+				double dy = y2 - y1;
+
+				if (labs(dx) > 3)
+					x1 -= dx-(dx * 0.9);
+				if (labs(dy) > 3)
+					y1 -= dy-(dy * 0.9);
+
+				circs2[i]->update(x1, y1);
+				circs2[i]->changeRadius(1/0.9);
+				circs[i]->update(x1, y1);
+				circs[i]->changeRadius(1/0.9);
+			}
+			break;
+		case GLUT_KEY_DOWN:
+			// cout << "zooming out" << endl;
+			for (int i = 0; i < num_circles; ++i) {
+				double y1 = circs[i]->getPosition().y;
+				double x1 = circs[i]->getPosition().x;
+				double dx = x2 - x1;
+				double dy = y2 - y1;
+
+				if (labs(dx) > 3)
+					x1 += dx-(dx * 0.9);
+				if (labs(dy) > 3)
+					y1 += dy-(dy * 0.9);
+
+				circs2[i]->update(x1, y1);
+				circs2[i]->changeRadius(0.9);
+				circs[i]->update(x1, y1);
+				circs[i]->changeRadius(0.9);
+			}
+			break;
+		case GLUT_KEY_LEFT:
+			//nothing yet
+			break;
+		case GLUT_KEY_RIGHT:
+			//nothing yet
+			break;
+		default:
+			//nothing yet
+			break;
+	}
+	glutPostRedisplay();
+}
+
 void keyboard( unsigned char c, int x, int y ) {
 	int current = 0;
 	int win = glutGetWindow();
@@ -455,7 +515,7 @@ void keyboard( unsigned char c, int x, int y ) {
 			}
 
 
-			// exitAll();
+			exitAll();
 			break;
 		default:
 			break;
@@ -881,6 +941,7 @@ void mouse5(int mouseButton, int state, int x, int y) {
 			if (!circle_clicked) {
 				global_x = x;
 				global_y = y;
+				// cout << "x: " << x << " y: " << y << endl;
 			}
 			WinArray[5]->buttons_mousepress(mouseButton, state, x, y);
 		}
@@ -923,6 +984,16 @@ void mouse5(int mouseButton, int state, int x, int y) {
 	}
 	else if ( GLUT_RIGHT_BUTTON == mouseButton ) {
 		// whatever
+		// cout << "Right button clicked" << endl;
+	}
+	else if (mouseButton == 3 || mouseButton == 4) {
+		cout << "scrolling" << endl;
+		if (state == GLUT_UP) {
+			cout << "Scroll up" << endl;
+		}
+		else if (state == GLUT_DOWN) {
+			cout << "Scroll down" << endl;
+		}
 	}
 	glutPostRedisplay();
 }
@@ -1293,15 +1364,19 @@ void mouse_motion(int x, int y) {
 			circs2[clicked_circle]->update(x, y);
 			circs[clicked_circle]->update(x, y);
 		}
-		// else if (current == 5 && mouseIsDragging && !circle_clicked && (clicked_circle == -1)) {
-		// 	int dx, dy;
-		// 	dx = global_x-x;
-		// 	dy = global_y-y;
-		// 	for (int i = 0; i < num_circles; ++i) {
-		// 		circs2[i]->update(circs2[i]->getPosition().x+dx, circs2[i]->getPosition().y+y);
-		// 		circs[i]->update(circs[i]->getPosition().x+dx, circs[i]->getPosition().y+y);
-		// 	}
-		// }
+		else if (current == 5 && mouseIsDragging && !circle_clicked && (clicked_circle == -1)) {
+			int dx, dy;
+			// cout << x << " " << y << endl;
+			dx = x-global_x;
+			dy = y-global_y;
+			global_x += dx;
+			global_y += dy;
+			// cout << "dx: " << dx << " dy: " << dy << endl;
+			for (int i = 0; i < num_circles; ++i) {
+				circs2[i]->update(circs2[i]->getPosition().x+dx, circs2[i]->getPosition().y+dy);
+				circs[i]->update(circs[i]->getPosition().x+dx, circs[i]->getPosition().y+dy);
+			}
+		}
 
 		int screen_pos_x = glutGet((GLenum)GLUT_WINDOW_X);
 		int screen_pos_y = glutGet((GLenum)GLUT_WINDOW_Y);
@@ -1374,6 +1449,7 @@ void createNewWindow(Window &new_win, Window old_win) {
 	else if (win == WinArray[5]->get_current_id()) {
 		glutDisplayFunc(drawWindow5);
 		glutMouseFunc(mouse5);
+		glutSpecialFunc(handleSpecialKeypress);
 	}
 	else if (win == WinArray[6]->get_current_id()) {
 		glutDisplayFunc(drawWindow6);

@@ -12,12 +12,12 @@ Circle::Circle() {
   label = "";
 }
 
-Circle::Circle(Point2 p, Color c, int r, string l):Shape(p, c) {
+Circle::Circle(Point2 p, Color c, double r, string l):Shape(p, c) {
   radius = r;
   label = l;
 }
 
-Circle::Circle(Point2 p, int r, string l):Shape(p) {
+Circle::Circle(Point2 p, double r, string l):Shape(p) {
   radius = r;
   label = l;
 }
@@ -85,4 +85,8 @@ void Circle::setPosition(int x, int y) {
 
 int Circle::getRadius() {
   return radius;
+}
+
+void Circle::changeRadius(double mult) {
+  radius *= mult;
 }
